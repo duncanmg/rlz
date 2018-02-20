@@ -2,14 +2,15 @@
 
 namespace RL;
 
+use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
-    'controllers' => [
-        'factories' => [
-            Controller\QuestionController::class => InvokableFactory::class,
-        ],
-    ],
+#    'controllers' => [
+#        'factories' => [
+#            Controller\QuestionController::class => InvokableFactory::class,
+#        ],
+#    ],
 
     'router' => [
         'routes' => [

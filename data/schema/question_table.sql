@@ -1,4 +1,4 @@
-CREATE TABLE questions (
+CREATE TABLE question (
 id INTEGER PRIMARY KEY,
 question TEXT NOT NULL,
 answer   TEXT NOT NULL,

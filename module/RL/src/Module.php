@@ -2,7 +2,6 @@
 
 namespace RL;
 
-// Add these import statements:
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
@@ -33,4 +32,18 @@ class Module implements ConfigProviderInterface
             ],
         ];
     }
+
+    public function getControllerConfig()
+    {
+        return [
+            'factories' => [
+                Controller\QuestionController::class => function($container) {
+                    return new Controller\QuestionController(
+                        $container->get(Model\QuestionTable::class)
+                    );
+                },
+            ],
+        ];
+    }
+
 }
