@@ -125,7 +125,18 @@ class Question implements InputFilterAwareInterface
             'name' => 'aq_enabled_yn',
             'required' => true,
             'filters' => [
-                ['name' => ToInt::class],
+                ['name' => StripTags::class],
+                ['name' => StringTrim::class],
+            ],
+            'validators' => [
+                [
+                    'name' => StringLength::class,
+                    'options' => [
+                        'encoding' => 'UTF-8',
+                        'min' => 1,
+                        'max' => 100,
+                    ],
+                ],
             ],
         ]);
 

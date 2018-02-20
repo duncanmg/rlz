@@ -1,1 +1,73 @@
 <?php
+$title = 'Edit question';
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+<?php
+$question = $form->get('question');
+$question->setAttribute('class', 'form-control');
+$question->setAttribute('placeholder', 'Question');
+
+$answer = $form->get('answer');
+$answer->setAttribute('class', 'form-control');
+$answer->setAttribute('placeholder', 'Answer');
+
+$score_qa = $form->get('score_qa');
+$score_qa->setAttribute('class', 'form-control');
+$score_qa->setAttribute('placeholder', 'Score QA');
+
+$score_aq = $form->get('score_aq');
+$score_aq->setAttribute('class', 'form-control');
+$score_aq->setAttribute('placeholder', 'Score AQ');
+
+$aq_enabled_yn = $form->get('aq_enabled_yn');
+$aq_enabled_yn->setAttribute('class', 'form-control');
+$aq_enabled_yn->setAttribute('placeholder', 'AQ Enabled Y/N');
+
+$submit = $form->get('submit');
+$submit->setAttribute('class', 'btn btn-primary');
+
+$form->setAttribute('action', $this->url('question', [
+    'action' => 'edit',
+    'id'     => $id,
+]));
+$form->prepare();
+
+echo $this->form()->openTag($form);
+?>
+<div class="form-group">
+    <?= $this->formLabel($question) ?>
+    <?= $this->formElement($question) ?>
+    <?= $this->formElementErrors()->render($question, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($answer) ?>
+    <?= $this->formElement($answer) ?>
+    <?= $this->formElementErrors()->render($answer, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($score_qa) ?>
+    <?= $this->formElement($score_qa) ?>
+    <?= $this->formElementErrors()->render($score_qa, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($score_aq) ?>
+    <?= $this->formElement($score_aq) ?>
+    <?= $this->formElementErrors()->render($score_aq, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($aq_enabled_yn) ?>
+    <?= $this->formElement($aq_enabled_yn) ?>
+    <?= $this->formElementErrors()->render($aq_enabled_yn, ['class' => 'help-block']) ?>
+</div>
+
+<?php
+
+echo $this->formSubmit($submit);
+echo $this->formHidden($form->get('id'));
+echo $this->form()->closeTag();
+
