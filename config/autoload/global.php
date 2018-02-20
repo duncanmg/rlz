@@ -13,4 +13,9 @@
 
 return [
     // ...
+   'db' => [
+        'driver' => 'Pdo',
+        'dsn'    => sprintf('sqlite:%s/data/questions.db', realpath(getcwd())),
+    ],
+
 ];
