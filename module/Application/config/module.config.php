@@ -11,6 +11,8 @@ use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
+use RL\Controller\QuestionController;
+
 return [
     'router' => [
         'routes' => [
@@ -19,7 +21,7 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
+                        'controller' => QuestionController::class,
                         'action'     => 'index',
                     ],
                 ],
