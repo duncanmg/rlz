@@ -28,6 +28,20 @@ return [
                     ],
                 ],
             ],
+            'question' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/question[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\QuestionController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
 

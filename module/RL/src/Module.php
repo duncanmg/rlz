@@ -42,6 +42,11 @@ class Module implements ConfigProviderInterface
                         $container->get(Model\QuestionTable::class)
                     );
                 },
+                Controller\QuestionController::class => function($container) {
+                    return new Controller\QuestionController(
+                        $container->get(Model\QuestionTable::class)
+                    );
+                },
             ],
         ];
     }
