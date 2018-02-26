@@ -1,0 +1,7 @@
+CREATE TABLE user_question (
+id INTEGER PRIMARY KEY,
+question_id INTEGER NOT NULL,
+user_id   INTEGER NOT NULL,
+score_qa INTEGER NOT NULL DEFAULT 0,
+score_aq INTEGER NOT NULL DEFAULT 0
+);
