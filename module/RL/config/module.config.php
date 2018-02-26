@@ -14,10 +14,10 @@ return [
 
     'router' => [
         'routes' => [
-            'question' => [
+            'admin' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route' => '/question[/:action[/:id]]',
+                    'route' => '/admin[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'     => '[0-9]+',

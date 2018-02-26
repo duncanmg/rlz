@@ -30,7 +30,7 @@ $aq_enabled_yn->setAttribute('placeholder', 'AQ Enabled Y/N');
 $submit = $form->get('submit');
 $submit->setAttribute('class', 'btn btn-primary');
 
-$form->setAttribute('action', $this->url('question', ['action' => 'add']));
+$form->setAttribute('action', $this->url('admin', ['action' => 'add']));
 $form->prepare();
 
 echo $this->form()->openTag($form);

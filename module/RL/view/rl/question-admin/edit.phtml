@@ -27,7 +27,7 @@ $aq_enabled_yn->setAttribute('placeholder', 'AQ Enabled Y/N');
 $submit = $form->get('submit');
 $submit->setAttribute('class', 'btn btn-primary');
 
-$form->setAttribute('action', $this->url('question', [
+$form->setAttribute('action', $this->url('admin', [
     'action' => 'edit',
     'id'     => $id,
 ]));

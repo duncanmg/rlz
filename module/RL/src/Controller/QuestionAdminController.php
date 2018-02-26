@@ -47,7 +47,7 @@ class QuestionAdminController extends AbstractActionController
 
         $question->exchangeArray($form->getData());
         $this->table->saveQuestion($question);
-        return $this->redirect()->toRoute('question');
+        return $this->redirect()->toRoute('admin');
     }
 
     public function editAction()
@@ -55,7 +55,7 @@ class QuestionAdminController extends AbstractActionController
         $id = (int) $this->params()->fromRoute('id', 0);
 
         if (0 === $id) {
-            return $this->redirect()->toRoute('question', ['action' => 'add']);
+            return $this->redirect()->toRoute('admin', ['action' => 'add']);
         }
 
         // Retrieve the question with the specified id. Doing so raises
@@ -64,7 +64,7 @@ class QuestionAdminController extends AbstractActionController
         try {
             $question = $this->table->getQuestion($id);
         } catch (\Exception $e) {
-            return $this->redirect()->toRoute('question', ['action' => 'index']);
+            return $this->redirect()->toRoute('admin', ['action' => 'index']);
         }
 
         $form = new QuestionAdminForm();
@@ -88,14 +88,14 @@ class QuestionAdminController extends AbstractActionController
         $this->table->saveQuestion($question);
 
         // Redirect to question list
-        return $this->redirect()->toRoute('question', ['action' => 'index']);
+        return $this->redirect()->toRoute('admin', ['action' => 'index']);
     }
 
     public function deleteAction()
     {
         $id = (int) $this->params()->fromRoute('id', 0);
         if (!$id) {
-            return $this->redirect()->toRoute('question');
+            return $this->redirect()->toRoute('admin');
         }
 
         $request = $this->getRequest();
@@ -108,7 +108,7 @@ class QuestionAdminController extends AbstractActionController
             }
 
             // Redirect to list of questions
-            return $this->redirect()->toRoute('question');
+            return $this->redirect()->toRoute('admin');
         }
 
         return [
