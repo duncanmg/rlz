@@ -30,26 +30,6 @@ class QuestionAdminForm extends Form
             ],
         ]);
         $this->add([
-            'name' => 'score_qa',
-            'type' => 'text',
-            'options' => [
-                'label' => 'Score QA',
-            ],
-            'attributes' => [
-                'value' => 0,
-            ],
-        ]);
-        $this->add([
-            'name' => 'score_aq',
-            'type' => 'text',
-            'options' => [
-                'label' => 'Score AQ',
-            ],
-            'attributes' => [
-                'value' => 0,
-            ],
-        ]);
-        $this->add([
             'name' => 'aq_enabled_yn',
             'type' => 'text',
             'options' => [

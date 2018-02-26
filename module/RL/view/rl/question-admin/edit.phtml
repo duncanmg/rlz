@@ -12,14 +12,6 @@ $answer = $form->get('answer');
 $answer->setAttribute('class', 'form-control');
 $answer->setAttribute('placeholder', 'Answer');
 
-$score_qa = $form->get('score_qa');
-$score_qa->setAttribute('class', 'form-control');
-$score_qa->setAttribute('placeholder', 'Score QA');
-
-$score_aq = $form->get('score_aq');
-$score_aq->setAttribute('class', 'form-control');
-$score_aq->setAttribute('placeholder', 'Score AQ');
-
 $aq_enabled_yn = $form->get('aq_enabled_yn');
 $aq_enabled_yn->setAttribute('class', 'form-control');
 $aq_enabled_yn->setAttribute('placeholder', 'AQ Enabled Y/N');
@@ -45,18 +37,6 @@ echo $this->form()->openTag($form);
     <?= $this->formLabel($answer) ?>
     <?= $this->formElement($answer) ?>
     <?= $this->formElementErrors()->render($answer, ['class' => 'help-block']) ?>
-</div>
-
-<div class="form-group">
-    <?= $this->formLabel($score_qa) ?>
-    <?= $this->formElement($score_qa) ?>
-    <?= $this->formElementErrors()->render($score_qa, ['class' => 'help-block']) ?>
-</div>
-
-<div class="form-group">
-    <?= $this->formLabel($score_aq) ?>
-    <?= $this->formElement($score_aq) ?>
-    <?= $this->formElementErrors()->render($score_aq, ['class' => 'help-block']) ?>
 </div>
 
 <div class="form-group">
