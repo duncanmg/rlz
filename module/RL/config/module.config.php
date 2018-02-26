@@ -23,7 +23,7 @@ return [
                         'id'     => '[0-9]+',
                     ],
                     'defaults' => [
-                        'controller' => Controller\QuestionController::class,
+                        'controller' => Controller\QuestionAdminController::class,
                         'action'     => 'index',
                     ],
                 ],

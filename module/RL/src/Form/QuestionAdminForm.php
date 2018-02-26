@@ -4,7 +4,7 @@ namespace RL\Form;
 
 use Zend\Form\Form;
 
-class QuestionForm extends Form
+class QuestionAdminForm extends Form
 {
     public function __construct($name = null)
     {
@@ -35,6 +35,9 @@ class QuestionForm extends Form
             'options' => [
                 'label' => 'Score QA',
             ],
+            'attributes' => [
+                'value' => 0,
+            ],
         ]);
         $this->add([
             'name' => 'score_aq',
@@ -42,12 +45,18 @@ class QuestionForm extends Form
             'options' => [
                 'label' => 'Score AQ',
             ],
+            'attributes' => [
+                'value' => 0,
+            ],
         ]);
         $this->add([
             'name' => 'aq_enabled_yn',
             'type' => 'text',
             'options' => [
                 'label' => 'AQ Enabled Y/N',
+            ],
+            'attributes' => [
+                'value' => 'Y',
             ],
         ]);
         $this->add([
@@ -58,5 +67,6 @@ class QuestionForm extends Form
                 'id'    => 'submitbutton',
             ],
         ]);
+
     }
 }

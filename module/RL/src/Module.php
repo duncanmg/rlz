@@ -37,8 +37,8 @@ class Module implements ConfigProviderInterface
     {
         return [
             'factories' => [
-                Controller\QuestionController::class => function($container) {
-                    return new Controller\QuestionController(
+                Controller\QuestionAdminController::class => function($container) {
+                    return new Controller\QuestionAdminController(
                         $container->get(Model\QuestionTable::class)
                     );
                 },
