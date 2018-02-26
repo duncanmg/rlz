@@ -47,8 +47,6 @@ class QuestionTable
         $data = [
             'question' => $question->question,
             'answer'  => $question->answer,
-            'score_qa'  => $question->score_qa,
-            'score_aq'  => $question->score_aq,
             'aq_enabled_yn'  => $question->aq_enabled_yn,
         ];
 
