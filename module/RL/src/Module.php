@@ -33,8 +33,8 @@ class Module implements ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Question());
                     return new TableGateway('question', $dbAdapter, null, $resultSetPrototype);
                 },
-                Model\AnswerChecker::class => function ($container) {
-                    return new Model\AnswerChecker();
+                Model\AnswerManager::class => function ($container) {
+                    return new Model\AnswerManager();
                 },
             ],
         ];
@@ -52,7 +52,7 @@ class Module implements ConfigProviderInterface
                 Controller\QuestionController::class => function($container) {
                     return new Controller\QuestionController(
                         $container->get(Model\QuestionTable::class),
-                        $container->get(Model\AnswerChecker::class),
+                        $container->get(Model\AnswerManager::class),
                         $container->get('RLContainerNamespace')
                     );
                 },

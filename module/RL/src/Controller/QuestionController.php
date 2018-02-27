@@ -6,7 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use RL\Model\QuestionTable;
 use RL\Model\Question;
-use RL\Model\AnswerChecker;
+use RL\Model\AnswerManager;
 use Zend\Session\Container;
 
 use RL\Form\QuestionForm;
@@ -15,13 +15,13 @@ class QuestionController extends AbstractActionController
 {
 
     private $table;
-    private $answerChecker;
+    private $answerManager;
     private $sessionContainer;
 
-    public function __construct(QuestionTable $table, AnswerChecker $answerChecker, Container $sessionContainer)
+    public function __construct(QuestionTable $table, AnswerManager $answerManager, Container $sessionContainer)
     {
         $this->table = $table;
-        $this->answerChecker = $answerChecker;
+        $this->answerManager = $answerManager;
         $this->sessionContainer = $sessionContainer;
 
         if (! isset($this->sessionContainer->tries)) {
@@ -37,7 +37,7 @@ class QuestionController extends AbstractActionController
             return ['form' => $this->setupForm()];
         }
 
-        if ($this->answerChecker->check($this->getQuestion(), $request->getPost()->answer)) {
+        if ($this->answerManager->check($this->getQuestion(), $request->getPost()->answer)) {
             $this->resetTries();
             $this->resetQuestion();
             return $this->redirect()->toRoute('question', ['action' => 'index']);

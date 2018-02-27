@@ -1,7 +1,7 @@
 <?php
 namespace RL\Model;
 
-class AnswerChecker
+class AnswerManager
 {
     public $id;
     public $question;
