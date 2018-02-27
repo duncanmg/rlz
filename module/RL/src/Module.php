@@ -50,13 +50,7 @@ class Module implements ConfigProviderInterface
                     );
                 },
                 Controller\QuestionController::class => function($container) {
-                    $sessionManager = $container->get(SessionManager::class);
-                    $sessionContainer = new Container('ContainerNamespace', $sessionManager);
-                    if (!isset($sessionContainer->xxxx)) {
-                         $sessionContainer->xxxx = 0;
-                    }
-                    $sessionContainer->xxxx = $sessionContainer->xxxx + 1;
-                    error_log('Session xxxx ' . $sessionContainer->xxxx );
+                    $container->get('RLContainerNamespace');
                     return new Controller\QuestionController(
                         $container->get(Model\QuestionTable::class),
                         $container->get(Model\AnswerChecker::class)

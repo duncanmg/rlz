@@ -74,4 +74,7 @@ return [
     'session_storage' => [
         'type' => SessionArrayStorage::class
     ],
+    'session_containers' => [
+        'RLContainerNamespace'
+    ],
 ];
