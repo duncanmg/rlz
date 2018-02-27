@@ -6,6 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use RL\Model\QuestionTable;
 use RL\Model\Question;
+use RL\Model\AnswerChecker;
 
 use RL\Form\QuestionForm;
 
@@ -13,10 +14,12 @@ class QuestionController extends AbstractActionController
 {
 
     private $table;
+    private $answerChecker;
 
-    public function __construct(QuestionTable $table)
+    public function __construct(QuestionTable $table, AnswerChecker $answerChecker)
     {
         $this->table = $table;
+        $this->answerChecker = $answerChecker;
     }
 
     public function indexAction()
@@ -36,6 +39,10 @@ class QuestionController extends AbstractActionController
 
         if (! $request->isPost()) {
             return ['form' => $form];
+        }
+
+        if ($this->answerChecker->check($question, $request->getPost()->answer)) {
+            return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
 
 #        $form->setInputFilter($question->getInputFilter());
