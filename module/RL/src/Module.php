@@ -34,7 +34,7 @@ class Module implements ConfigProviderInterface
                     return new TableGateway('question', $dbAdapter, null, $resultSetPrototype);
                 },
                 Model\AnswerManager::class => function ($container) {
-                    return new Model\AnswerManager();
+                    return new Model\AnswerManager($container->get(Model\QuestionTable::class));
                 },
             ],
         ];
