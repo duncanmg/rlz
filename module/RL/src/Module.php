@@ -50,10 +50,10 @@ class Module implements ConfigProviderInterface
                     );
                 },
                 Controller\QuestionController::class => function($container) {
-                    $container->get('RLContainerNamespace');
                     return new Controller\QuestionController(
                         $container->get(Model\QuestionTable::class),
-                        $container->get(Model\AnswerChecker::class)
+                        $container->get(Model\AnswerChecker::class),
+                        $container->get('RLContainerNamespace')
                     );
                 },
             ],

@@ -7,6 +7,7 @@ use Zend\View\Model\ViewModel;
 use RL\Model\QuestionTable;
 use RL\Model\Question;
 use RL\Model\AnswerChecker;
+use Zend\Session\Container;
 
 use RL\Form\QuestionForm;
 
@@ -15,51 +16,85 @@ class QuestionController extends AbstractActionController
 
     private $table;
     private $answerChecker;
+    private $sessionContainer;
 
-    public function __construct(QuestionTable $table, AnswerChecker $answerChecker)
+    public function __construct(QuestionTable $table, AnswerChecker $answerChecker, Container $sessionContainer)
     {
         $this->table = $table;
         $this->answerChecker = $answerChecker;
+        $this->sessionContainer = $sessionContainer;
+
+        if (! isset($this->sessionContainer->tries)) {
+            $this->sessionContainer->tries = 0;
+        }
     }
 
     public function indexAction()
     {
-        try {
-            $question = $this->table->getQuestion(1);
-        } catch (\Exception $e) {
-            return $this->redirect()->toRoute('question', ['action' => 'index']);
-        }
-
-        $form = new QuestionForm();
-        $form->get('question')->setValue($question->question);
-
-        $form->get('submit')->setValue('Submit Answer');
-
         $request = $this->getRequest();
 
         if (! $request->isPost()) {
-            return ['form' => $form];
+            return ['form' => $this->setupForm()];
         }
 
-        if ($this->answerChecker->check($question, $request->getPost()->answer)) {
+        if ($this->answerChecker->check($this->getQuestion(), $request->getPost()->answer)) {
+            $this->resetTries();
+            $this->resetQuestion();
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
 
-#        $form->setInputFilter($question->getInputFilter());
-#        $form->setData($request->getPost());
-#
-#        if (! $form->isValid()) {
-#            return ['form' => $form];
-#        }
-#
-#        $question->exchangeArray($form->getData());
-#        $this->table->saveQuestion($question);
-#        return $this->redirect()->toRoute('question');
+        $this->incrementTries();
+        if (!$this->checkTriesOk()) {
+            $this->resetTries();
+            $this->resetQuestion();
+        }
 
         $view =  new ViewModel([
         ]);
         $view->setTemplate('/rl/question/message.phtml');
         return $view;
+    }
+
+    private function setupForm() {
+            $question = $this->table->getQuestion($this->getQuestionId());
+        $form = new QuestionForm();
+        $form->get('question')->setValue($question->question);
+
+        $form->get('submit')->setValue('Submit Answer');
+
+        return $form;
+    }
+
+    private function getQuestion() {
+            # error_log('getQuestion');
+            return $this->table->getQuestion($this->getQuestionId());
+    }
+
+    private function getQuestionId() {
+       if (!$this->sessionContainer->questionId) {
+            $id = rand(1,5);
+            $this->sessionContainer->questionId = $id;
+       }
+       # error_log('getQuestionId ' . $this->sessionContainer->questionId);
+       return $this->sessionContainer->questionId;
+    }
+
+    private function resetQuestion() {
+       $this->sessionContainer->questionId = 0;
+    }
+
+    private function incrementTries() {
+      $this->sessionContainer->tries = $this->sessionContainer->tries + 1;
+      return $this->sessionContainer->tries;
+    }
+
+    private function checkTriesOk() {
+      # error_log('checkTriesOk ' . $this->sessionContainer->tries);
+      return ($this->sessionContainer->tries < 3) ? true : false;
+    }
+
+    private function resetTries() {
+      $this->sessionContainer->tries  = 0;
     }
 
 #    public function editAction()
