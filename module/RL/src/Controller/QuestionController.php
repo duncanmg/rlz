@@ -33,11 +33,11 @@ class QuestionController extends AbstractActionController
     {
         $request = $this->getRequest();
 
+        $answerManager = $this->answerManager;
+
         if (! $request->isPost()) {
             return ['form' => $this->setupForm()];
         }
-
-        $answerManager = $this->answerManager;
 
         $correct = $answerManager->setQuestionId($this->getQuestionId())
             ->setTries($this->getTries())
@@ -67,6 +67,9 @@ class QuestionController extends AbstractActionController
     }
 
     private function getQuestionId() {
+        if (!  $this->sessionContainer->questionId) {
+           $this->setQuestionId($this->answerManager->getQuestionId());
+        }
        return $this->sessionContainer->questionId;
     }
 
