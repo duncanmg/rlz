@@ -31,6 +31,9 @@ class QuestionForm extends Form
             'options' => [
                 'label' => 'Answer',
             ],
+            'attributes' => [
+                'required' => true,
+            ],
         ]);
         $this->add([
             'name' => 'submit',
