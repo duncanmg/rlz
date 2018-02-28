@@ -18,32 +18,51 @@ class AnswerManager
     public function checkAnswer($answer)
     {
        $this->getQuestion();
-       # die('checkAnswer');
-       if( $this->check($this->getQuestion(), $answer)){
-          # die('Correct');
-          $this->resetTries();
-          $this->resetQuestionId();
+
+       $check = ($this->getDirection() == 'QA') ? $this->checkQA($this->getQuestion(), $answer)
+         : $this->checkAQ($this->getQuestion(), $answer);
+
+       if( $check){
+
+          $this->reset();
           return true;
+
        }
        else {
-          # die('Incorrect');
+
           $this->incrementTries(); 
-          if ( $this->checkTriesOk()){
+          if ($this->checkTriesOk()){
               return false;
+
           }
           else {
-              $this->resetTries();
-              $this->resetQuestionId();
+
+              $this->reset();
               return false;
+
           }
        }
     }
 
-    private function check(Question $question, $answer)
+    private function reset() {
+          $this->resetTries();
+          $this->resetQuestionId();
+          $this->resetDirection();
+          return $this;
+    }
+
+    private function checkQA(Question $question, $answer)
     {
        error_log(print_r([$question, $answer],true));
        $this->exceptionIfNoAnswer($answer);
        return ($question->answer == $answer) ? true : false;
+    }
+
+    private function checkAQ(Question $question, $answer)
+    {
+       error_log(print_r([$question, $answer],true));
+       $this->exceptionIfNoAnswer($answer);
+       return ($question->question == $answer) ? true : false;
     }
 
     private function exceptionIfNoAnswer($answer) {
@@ -100,5 +119,23 @@ class AnswerManager
       $this->tries = $tries;
       return $this;
     }
+
+    public function getDirection() {
+      if (! $this->direction) {
+          $this->resetDirection();
+      }
+      return $this->direction;
+    }
+
+    public function setDirection($direction) {
+      $this->direction = $direction;
+      return $this;
+    }
+
+    private function resetDirection() {
+      $this->setDirection(rand(0,1) ? 'AQ' : 'QA');
+      return $this;
+    }
+
 }
 

@@ -34,56 +34,73 @@ class QuestionController extends AbstractActionController
         $request = $this->getRequest();
 
         $answerManager = $this->answerManager;
+        $this->fromSession($answerManager);
 
         if (! $request->isPost()) {
-            return ['form' => $this->setupForm(), 'message' => ''];
+            return $this->getView();
         }
 
-        $correct = $answerManager->setQuestionId($this->getQuestionId())
-            ->setTries($this->getTries())
-            ->checkAnswer($request->getPost()->answer);
-        # die('after checkAnswer ' . $correct);
-        $this->setQuestionId($answerManager->getQuestionId());
-        $this->setTries($answerManager->getTries());
+        $correct = $answerManager->checkAnswer($request->getPost()->answer);
+
+        $this->toSession($answerManager);
 
         if($correct) {
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
 
-        $message = $this->getTries() ? 'Sorry. Your answer was incorrect. Please try again.' : '';
-        return  ['form' => $this->setupForm(),  
-            'message' => $message];
+        $message = $answerManager->getTries() ? 'Sorry. Your answer was incorrect. Please try again.' : '';
+        return $this->getView($message);
     }
 
-    private function setupForm() {
-            $question = $this->table->getQuestion($this->getQuestionId());
+    private function fromSession($answerManager)
+    {
+       $answerManager->setQuestionId($this->sessionContainer->questionId);
+       $answerManager->setTries($this->sessionContainer->tries);
+       $answerManager->setDirection($this->sessionContainer->direction);
+       return $this;
+    }
+
+    private function toSession($answerManager)
+    {
+       $this->sessionContainer->questionId = $answerManager->getQuestionId();
+       $this->sessionContainer->tries = $answerManager->getTries();
+       $this->sessionContainer->direction = $answerManager->getDirection();
+       return $this;
+    }
+
+    private function getView($message = '') {
+        if ($this->answerManager->getDirection() == 'QA')
+        {
+            $form = $this->setupQAForm();
+        }
+        else
+        {
+            $form = $this->setupAQForm();
+        }
+        $view =  new ViewModel([
+            'message' => $message,
+            'form' => $form
+        ]);
+        return $view;
+    }
+
+    private function setupQAForm() {
+        $question = $this->table->getQuestion($this->answerManager->getQuestionId());
         $form = new QuestionForm();
         $form->get('question')->setValue($question->question);
-
         $form->get('submit')->setValue('Submit Answer');
 
         return $form;
     }
 
-    private function getQuestionId() {
-        if (!  $this->sessionContainer->questionId) {
-           $this->setQuestionId($this->answerManager->getQuestionId());
-        }
-       return $this->sessionContainer->questionId;
-    }
+    private function setupAQForm() {
+        $question = $this->table->getQuestion($this->answerManager->getQuestionId());
+        $form = new QuestionForm();
+        $form->get('question')->setValue($question->answer);
 
-    private function setQuestionId($questionId) {
-       $this->sessionContainer->questionId = $questionId;
-       return $this;
-    }
+        $form->get('submit')->setValue('Submit Answer');
 
-    private function getTries() {
-       return $this->sessionContainer->tries;
-    }
-
-    private function setTries($tries) {
-       $this->sessionContainer->tries = $tries;
-       return $this;
+        return $form;
     }
 
 }
