@@ -36,7 +36,7 @@ class QuestionController extends AbstractActionController
         $answerManager = $this->answerManager;
 
         if (! $request->isPost()) {
-            return ['form' => $this->setupForm()];
+            return ['form' => $this->setupForm(), 'message' => ''];
         }
 
         $correct = $answerManager->setQuestionId($this->getQuestionId())
@@ -50,10 +50,9 @@ class QuestionController extends AbstractActionController
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
 
-        $view =  new ViewModel([
-        ]);
-        $view->setTemplate('/rl/question/message.phtml');
-        return $view;
+        $message = $this->getTries() ? 'Sorry. Your answer was incorrect. Please try again.' : '';
+        return  ['form' => $this->setupForm(),  
+            'message' => $message];
     }
 
     private function setupForm() {
