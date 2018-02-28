@@ -69,38 +69,22 @@ class QuestionController extends AbstractActionController
     }
 
     private function getView($message = '') {
-        if ($this->answerManager->getDirection() == 'QA')
-        {
-            $form = $this->setupQAForm();
-        }
-        else
-        {
-            $form = $this->setupAQForm();
-        }
+
+        $question = $this->table->getQuestion($this->answerManager->getQuestionId());
+        $form = new QuestionForm();
+        $form->get('submit')->setValue('Submit Answer');
+
+        $questionText = ($this->answerManager->getDirection() == 'QA')
+           ? $question->question
+           : $question->answer;
+
+        $form->get('question')->setValue($questionText);
+
         $view =  new ViewModel([
             'message' => $message,
             'form' => $form
         ]);
         return $view;
-    }
-
-    private function setupQAForm() {
-        $question = $this->table->getQuestion($this->answerManager->getQuestionId());
-        $form = new QuestionForm();
-        $form->get('question')->setValue($question->question);
-        $form->get('submit')->setValue('Submit Answer');
-
-        return $form;
-    }
-
-    private function setupAQForm() {
-        $question = $this->table->getQuestion($this->answerManager->getQuestionId());
-        $form = new QuestionForm();
-        $form->get('question')->setValue($question->answer);
-
-        $form->get('submit')->setValue('Submit Answer');
-
-        return $form;
     }
 
 }
