@@ -112,7 +112,7 @@ class AnswerManager
 
     public function getTries() 
     {
-      return $this->tries || 0;
+      return $this->tries ? $this->tries : 0;
     }
 
     public function setTries($tries)
