@@ -27,6 +27,11 @@ class QuestionTable
         return $this->tableGateway->select();
     }
 
+    public function countAll($paginated = false)
+    {
+        return count($this->tableGateway->select());
+    }
+
     public function getQuestion($id)
     {
         $id = (int) $id;

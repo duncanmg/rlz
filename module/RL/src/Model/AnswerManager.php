@@ -72,7 +72,8 @@ class AnswerManager
     }
 
     private function resetQuestionId() {
-       $id = rand(1,5);
+       $max = $this->table->countAll();
+       $id = rand(1,$max);
        $this->setQuestionId($id);
        return $this;
     }
