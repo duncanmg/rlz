@@ -27,11 +27,21 @@ class Module implements ConfigProviderInterface
                     $tableGateway = $container->get(Model\QuestionTableGateway::class);
                     return new Model\QuestionTable($tableGateway);
                 },
+                Model\UserQuestionTable::class => function($container) {
+                    $tableGateway = $container->get(Model\UserQuestionTableGateway::class);
+                    return new Model\UserQuestionTable($tableGateway);
+                },
                 Model\QuestionTableGateway::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Question());
                     return new TableGateway('question', $dbAdapter, null, $resultSetPrototype);
+                },
+                Model\UserQuestionTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\UserQuestion());
+                    return new TableGateway('user_question', $dbAdapter, null, $resultSetPrototype);
                 },
                 Model\AnswerManager::class => function ($container) {
                     return new Model\AnswerManager($container->get(Model\QuestionTable::class));
