@@ -48,7 +48,9 @@ class QuestionController extends AbstractActionController
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
 
-        $message = $answerManager->getTries() ? 'Sorry. Your answer was incorrect. Please try again.' : '';
+        $message = $answerManager->getTries() 
+            ? 'Sorry. Your answer was incorrect. Please try again.' 
+            : 'The correct answer to the last question was: ' . $answerManager->getAnswerToLastQuestion();
         return $this->getView($message);
     }
 

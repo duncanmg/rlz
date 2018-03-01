@@ -6,6 +6,9 @@ class AnswerManager
 
     private $questionId;
     private $tries;
+    private $direction;
+    private $answerToLastQuestion;
+
     private $table;
 
     private $inputFilter;
@@ -37,6 +40,7 @@ class AnswerManager
           }
           else {
 
+              $this->setAnswerToLastQuestion();
               $this->reset();
               return false;
 
@@ -136,6 +140,18 @@ class AnswerManager
     private function resetDirection() {
       $this->setDirection(rand(0,1) ? 'AQ' : 'QA');
       return $this;
+    }
+
+    private function setAnswerToLastQuestion() {
+        $answer = ($this->getDirection() == 'QA') 
+          ? $this->getQuestion()->answer 
+          : $this->getQuestion()->question;
+        $this->answerToLastQuestion = $answer;
+        return $this;
+    }
+
+    public function getAnswerToLastQuestion($answer) {
+        return $this->answerToLastQuestion;
     }
 
 }
