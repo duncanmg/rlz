@@ -11,6 +11,8 @@ use Application\Controller\IndexController;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+use RL\Controller\QuestionController;
+
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
@@ -33,16 +35,17 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/', 'GET');
         $this->assertResponseStatusCode(200);
-        $this->assertModuleName('application');
-        $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
-        $this->assertControllerClass('IndexController');
+        $this->assertModuleName('rl');
+        $this->assertControllerName(QuestionController::class); // as specified in router's controller name alias
+        $this->assertControllerClass('QuestionController');
         $this->assertMatchedRouteName('home');
     }
 
     public function testIndexActionViewModelTemplateRenderedWithinLayout()
     {
         $this->dispatch('/', 'GET');
-        $this->assertQuery('.container .jumbotron');
+        # $this->assertQuery('.container .jumbotron');
+        $this->assertQueryContentContains('h1', 'Translate question');
     }
 
     public function testInvalidRouteDoesNotCrash()
