@@ -1,31 +1,34 @@
 <?php
 namespace RL\Model;
 
+use RL\Model\ActiveQuestion;
+
 class AnswerManager
 {
 
     private $questionId;
     private $tries;
     private $direction;
-    private $answerToLastQuestion;
+    private $lastActiveQuestion;
+    private $activeQuestion;
 
     private $table;
 
     private $inputFilter;
 
-    public function __construct(QuestionTable $table)
+    public function __construct(QuestionTable $table, ActiveQuestion $activeQuestion)
     {
        $this->table = $table;
+       # $this->activeQuestion = $activeQuestion;
     }
 
     public function checkAnswer($answer)
     {
-       $this->getQuestion();
+       $activeQuestion = $this->getActiveQuestion();
 
-       $check = ($this->getDirection() == 'QA') ? $this->checkQA($this->getQuestion(), $answer)
-         : $this->checkAQ($this->getQuestion(), $answer);
+       $correct = $activeQuestion->check($answer);
 
-       if( $check){
+       if( $correct){
 
           $this->reset();
           return true;
@@ -33,14 +36,11 @@ class AnswerManager
        }
        else {
 
-          $this->incrementTries(); 
-          if ($this->checkTriesOk()){
+          if ($activeQuestion->allowMoreTries()){
               return false;
 
           }
           else {
-
-              $this->setAnswerToLastQuestion();
               $this->reset();
               return false;
 
@@ -49,24 +49,11 @@ class AnswerManager
     }
 
     private function reset() {
-          $this->resetTries();
+          $this->setLastActiveQuestion();
           $this->resetQuestionId();
           $this->resetDirection();
+          $this->resetActiveQuestion();
           return $this;
-    }
-
-    private function checkQA(Question $question, $answer)
-    {
-       error_log(print_r([$question, $answer],true));
-       $this->exceptionIfNoAnswer($answer);
-       return ($question->answer == $answer) ? true : false;
-    }
-
-    private function checkAQ(Question $question, $answer)
-    {
-       error_log(print_r([$question, $answer],true));
-       $this->exceptionIfNoAnswer($answer);
-       return ($question->question == $answer) ? true : false;
     }
 
     private function exceptionIfNoAnswer($answer) {
@@ -82,6 +69,10 @@ class AnswerManager
        return $this;
     }
 
+    private function resetActiveQuestion() {
+      $this->activeQuestion="";
+    }
+
     private function incrementTries() {
       
       $this->setTries($this->getTries()+1);
@@ -92,15 +83,11 @@ class AnswerManager
       return ($this->getTries() < 3) ? true : false;
     }
 
-    private function resetTries() {
-      $this->setTries(0);
-    }
-
     private function getQuestion() {
             return $this->table->getQuestion($this->getQuestionId());
     }
 
-    public function getQuestionId() 
+    private function getQuestionId() 
     {
       if (!$this->questionId){
           $this->resetQuestionId();
@@ -108,31 +95,20 @@ class AnswerManager
       return $this->questionId;
     }
 
-    public function setQuestionId($questionId)
+    private function setQuestionId($questionId)
     {
       $this->questionId = $questionId;
       return $this;
     }
 
-    public function getTries() 
-    {
-      return $this->tries ? $this->tries : 0;
-    }
-
-    public function setTries($tries)
-    {
-      $this->tries = $tries;
-      return $this;
-    }
-
-    public function getDirection() {
+    private function getDirection() {
       if (! $this->direction) {
           $this->resetDirection();
       }
       return $this->direction;
     }
 
-    public function setDirection($direction) {
+    private function setDirection($direction) {
       $this->direction = $direction;
       return $this;
     }
@@ -142,16 +118,27 @@ class AnswerManager
       return $this;
     }
 
-    private function setAnswerToLastQuestion() {
-        $answer = ($this->getDirection() == 'QA') 
-          ? $this->getQuestion()->answer 
-          : $this->getQuestion()->question;
-        $this->answerToLastQuestion = $answer;
+    public function getLastActiveQuestion() {
+        return $this->lastActiveQuestion;
+    }
+
+    private function setLastActiveQuestion() {
+        $this->lastActiveQuestion = $this->getActiveQuestion();
         return $this;
     }
 
-    public function getAnswerToLastQuestion($answer) {
-        return $this->answerToLastQuestion;
+    public function setActiveQuestion(ActiveQuestion $activeQuestion) {
+        $this->activeQuestion = $activeQuestion;
+        return $this;
+    }
+
+    public function getActiveQuestion() {
+        if (! $this->activeQuestion) {
+            $this->activeQuestion = new ActiveQuestion();
+               $this->activeQuestion->setQuestion($this->getQuestion())
+              ->setDirection($this->getDirection());
+        }
+        return $this->activeQuestion;
     }
 
 }

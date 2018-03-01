@@ -48,39 +48,38 @@ class QuestionController extends AbstractActionController
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
 
-        $message = $answerManager->getTries() 
+        $message = $answerManager->getActiveQuestion()->getTries() 
             ? 'Sorry. Your answer was incorrect. Please try again.' 
-            : 'The correct answer to the last question was: ' . $answerManager->getAnswerToLastQuestion();
+            : 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText();
         return $this->getView($message);
     }
 
     private function fromSession($answerManager)
     {
-       $answerManager->setQuestionId($this->sessionContainer->questionId);
-       $answerManager->setTries($this->sessionContainer->tries);
-       $answerManager->setDirection($this->sessionContainer->direction);
+       if ($this->sessionContainer->activeQuestion){
+          $answerManager->setActiveQuestion($this->sessionContainer->activeQuestion);
+       }
+       # $answerManager->setTries($this->sessionContainer->tries);
+       # $answerManager->setDirection($this->sessionContainer->direction);
        return $this;
     }
 
     private function toSession($answerManager)
     {
-       $this->sessionContainer->questionId = $answerManager->getQuestionId();
-       $this->sessionContainer->tries = $answerManager->getTries();
-       $this->sessionContainer->direction = $answerManager->getDirection();
+    
+       $this->sessionContainer->activeQuestion = $answerManager->getActiveQuestion();
+       # $this->sessionContainer->tries = $answerManager->getTries();
+       # $this->sessionContainer->direction = $answerManager->getDirection();
        return $this;
     }
 
     private function getView($message = '') {
 
-        $question = $this->table->getQuestion($this->answerManager->getQuestionId());
+        $question = $this->answerManager->getActiveQuestion();
         $form = new QuestionForm();
         $form->get('submit')->setValue('Submit Answer');
 
-        $questionText = ($this->answerManager->getDirection() == 'QA')
-           ? $question->question
-           : $question->answer;
-
-        $form->get('question')->setValue($questionText);
+        $form->get('question')->setValue($question->getQuestionText());
 
         $view =  new ViewModel([
             'message' => $message,
