@@ -19,6 +19,10 @@ $answer->setAttribute('placeholder', 'Answer');
 $submit = $form->get('submit');
 $submit->setAttribute('class', 'btn btn-primary');
 
+// This provides CSS classes for the donotknow button:
+$donotknow = $form->get('donotknow');
+$donotknow->setAttribute('class', 'btn btn-secondary');
+
 $form->setAttribute('action', $this->url('question', ['action' => 'index']));
 $form->prepare();
 
@@ -40,6 +44,15 @@ echo $this->form()->openTag($form);
 
 <?php
 echo $this->formSubmit($submit);
+echo $this->formSubmit($donotknow);
 echo $this->formHidden($form->get('id'));
 echo $this->form()->closeTag();
+?>
 
+<script type="text/javascript">
+  function checkForm()
+  {
+      document.getElementsByName('answer')[0].value = 'Do not know';
+      return true;
+  }
+</script>

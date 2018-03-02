@@ -44,6 +44,15 @@ class QuestionForm extends Form
                 'id'    => 'submitbutton',
             ],
         ]);
+        $this->add([
+            'name' => 'donotknow',
+            'type' => 'submit',
+            'attributes' => [
+                'value' => 'Don\'t Know',
+                'id'    => 'donotknowbutton',
+                'onclick' => 'return checkForm()'
+            ],
+        ]);
 
     }
 }

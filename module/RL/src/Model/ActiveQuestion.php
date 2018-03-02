@@ -2,6 +2,7 @@
 namespace RL\Model;
 
 use RL\Model\Question;
+use Exception;
 
 class ActiveQuestion
 {
@@ -42,11 +43,19 @@ class ActiveQuestion
          return false;
       }
     }
+
+    public function doNotKnow() {
+      while ($this->allowMoreTries()) {
+          $this->incrementTries();
+      }
+    }
+
     public function getQuestion() {
       return $this->question;
     }
 
     public function setQuestion(Question $question) {
+        $this->exceptionIfFrozen( $this->question);
         $this->question = $question;
         return $this;
     }
@@ -55,7 +64,7 @@ class ActiveQuestion
       return $this->correct;
     }
 
-    public function setCorrect($correct) {
+    private function setCorrect($correct) {
       $this->correct = $correct;
       return $this;
     }
@@ -65,6 +74,7 @@ class ActiveQuestion
     }
 
     public function setDirection($direction) {
+      $this->exceptionIfFrozen( $this->direction);
       $this->direction = $direction;
       return $this;
     }
@@ -96,5 +106,10 @@ class ActiveQuestion
        return ($this->getTries() >= 3) ? false : true;
     }
 
+    private function exceptionIfFrozen($test) {
+      if ($test) {
+         throw new \Exception("This ActiveQuestion is frozen");
+      }
+    }
 }
 

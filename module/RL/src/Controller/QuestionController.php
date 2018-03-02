@@ -40,7 +40,7 @@ class QuestionController extends AbstractActionController
             return $this->getView();
         }
 
-        $correct = $answerManager->checkAnswer($request->getPost()->answer);
+        $correct = $answerManager->checkAnswer($request->getPost()->answer, $request->getPost()->donotknow);
 
         $this->toSession($answerManager);
 

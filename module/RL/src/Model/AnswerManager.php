@@ -16,17 +16,21 @@ class AnswerManager
 
     private $inputFilter;
 
-    public function __construct(QuestionTable $table, ActiveQuestion $activeQuestion)
+    public function __construct(QuestionTable $table)
     {
        $this->table = $table;
-       # $this->activeQuestion = $activeQuestion;
     }
 
-    public function checkAnswer($answer)
+    public function checkAnswer($answer, $doNotKnow)
     {
        $activeQuestion = $this->getActiveQuestion();
 
-       $correct = $activeQuestion->check($answer);
+       if ($doNotKnow){
+           $activeQuestion->doNotKnow();
+       }
+       else {
+           $correct = $activeQuestion->check($answer);
+       }
 
        if( $correct){
 

@@ -46,6 +46,9 @@ class Module implements ConfigProviderInterface
                 Model\AnswerManager::class => function ($container) {
                     return new Model\AnswerManager($container->get(Model\QuestionTable::class));
                 },
+                Model\ActiveQuestion::class => function ($container) {
+                    return new Model\ActiveQuestion();
+                },
             ],
         ];
     }
