@@ -7,6 +7,7 @@ use Zend\View\Model\ViewModel;
 use RL\Model\QuestionTable;
 use RL\Model\Question;
 use RL\Model\AnswerManager;
+use RL\Model\ScoreManager;
 use Zend\Session\Container;
 
 use RL\Form\QuestionForm;
@@ -17,16 +18,15 @@ class QuestionController extends AbstractActionController
     private $table;
     private $answerManager;
     private $sessionContainer;
+    private $scoreManager;
 
-    public function __construct(QuestionTable $table, AnswerManager $answerManager, Container $sessionContainer)
+    public function __construct(QuestionTable $table, AnswerManager $answerManager, Container $sessionContainer, ScoreManager $scoreManager)
     {
         $this->table = $table;
         $this->answerManager = $answerManager;
         $this->sessionContainer = $sessionContainer;
+        $this->scoreManager = $scoreManager;
 
-        if (! isset($this->sessionContainer->tries)) {
-            $this->sessionContainer->tries = 0;
-        }
     }
 
     public function indexAction()
@@ -45,13 +45,23 @@ class QuestionController extends AbstractActionController
         $this->toSession($answerManager);
 
         if($correct) {
+            $this->updateScores($answerManager->getLastActiveQuestion());
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
+        else if ( $answerManager->getActiveQuestion()->getTries()){
+            $message = 'Sorry. Your answer was incorrect. Please try again.';
+            return $this->getView($message);
+        }
 
-        $message = $answerManager->getActiveQuestion()->getTries() 
-            ? 'Sorry. Your answer was incorrect. Please try again.' 
-            : 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText();
+        $this->updateScores($answerManager->getLastActiveQuestion());
+        $message = 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText();
         return $this->getView($message);
+    }
+
+    private function updateScores($lastActiveQuestion) {
+       $this->scoreManager->setUserId(1)
+         ->setActiveQuestion($lastActiveQuestion)
+         ->update();   
     }
 
     private function fromSession($answerManager)

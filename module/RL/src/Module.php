@@ -49,6 +49,9 @@ class Module implements ConfigProviderInterface
                 Model\ActiveQuestion::class => function ($container) {
                     return new Model\ActiveQuestion();
                 },
+                Model\ScoreManager::class => function ($container) {
+                    return new Model\ScoreManager($container->get(Model\UserQuestionTable::class));
+                },
             ],
         ];
     }
@@ -66,7 +69,8 @@ class Module implements ConfigProviderInterface
                     return new Controller\QuestionController(
                         $container->get(Model\QuestionTable::class),
                         $container->get(Model\AnswerManager::class),
-                        $container->get('RLContainerNamespace')
+                        $container->get('RLContainerNamespace'),
+                        $container->get(Model\ScoreManager::class)
                     );
                 },
             ],
