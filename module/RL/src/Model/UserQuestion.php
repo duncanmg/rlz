@@ -25,8 +25,8 @@ class UserQuestion implements InputFilterAwareInterface
         $this->id     = !empty($data['id']) ? $data['id'] : null;
         $this->question_id = !empty($data['question_id']) ? $data['question_id'] : null;
         $this->user_id  = !empty($data['user_id']) ? $data['user_id'] : null;
-        $this->score_qa  = !empty($data['score_qa']) ? $data['score_qa'] : 'Y';
-        $this->score_aq  = !empty($data['score_aq']) ? $data['score_aq'] : 'Y';
+        $this->score_qa  = !empty($data['score_qa']) ? $data['score_qa'] : 0;
+        $this->score_aq  = !empty($data['score_aq']) ? $data['score_aq'] : 0;
     }
 
     public function getArrayCopy()

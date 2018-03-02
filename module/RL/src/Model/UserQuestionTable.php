@@ -32,16 +32,16 @@ class UserQuestionTable
         return count($this->tableGateway->select());
     }
 
-    public function getUserQuestion($userId)
+    public function getUserQuestion($userId, $questionId)
     {
         $userId = (int) $userId;
-        $rowset = $this->tableGateway->select(['user_id' => $userId]);
+        $rowset = $this->tableGateway->select(['user_id' => $userId, 'question_id' => $questionId]);
         $row = $rowset->current();
         if (! $row) {
             throw new RuntimeException(sprintf(
-                'Could not find row with identifier %d',
-                $userId
-            ));
+                'Could not find row with user_id  %d question_id %d',
+                $userId, $questionId
+            ),1000);
         }
 
         return $row;
@@ -58,12 +58,13 @@ class UserQuestionTable
 
         $id = (int) $userQuestion->id;
 
+
         if ($id === 0) {
             $this->tableGateway->insert($data);
             return;
         }
 
-        if (! $this->getUserQuestion($id)) {
+        if (! $this->getUserQuestion($data['user_id'], $data['question_id'])) {
             throw new RuntimeException(sprintf(
                 'Cannot update question with identifier %d; does not exist',
                 $id
