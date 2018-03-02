@@ -33,6 +33,7 @@ class QuestionForm extends Form
             ],
             'attributes' => [
                 'required' => true,
+                'autocomplete' => 'off',
             ],
         ]);
         $this->add([
