@@ -4,7 +4,20 @@ $this->headTitle($title);
 $message_class = $message['type'] == 'incorrect' ? 'bg-danger' : 'bg-info';
 ?>
 <h1><?= $this->escapeHtml($title) ?></h1>
-<p class="<?= $message_class ?>"><?= $message['message'] ?></p>
+<div>
+<h2>Score for this session</h2>
+<table class="table table-bordered">
+<tr>
+<td>Number of Questions Asked</td><td>Correct</td><td>Wrong</td>
+</tr>
+<tr>
+<td><?= $score['asked'] ?></td>
+<td><?= $score['correct'] ?></td>
+<td><?= $score['incorrect'] ?></td>
+</tr>
+</table>
+</div>
+<div><p class="<?= $message_class ?>"><?= $message['message'] ?></p></div>
 <?php
 // This provides a default CSS class and placeholder text for the title element:
 $question = $form->get('question');

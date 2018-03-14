@@ -36,8 +36,9 @@ class QuestionController extends AbstractActionController
         $answerManager = $this->answerManager;
         $this->fromSession($answerManager);
 
+        $score = [ 'asked' => 0, 'correct' => 0, 'incorrect' => 0 ];
         if (! $request->isPost()) {
-            return $this->getView();
+            return $this->getView( [], $score);
         }
 
         $correct = $answerManager->checkAnswer($request->getPost()->answer, $request->getPost()->donotknow);
@@ -51,13 +52,13 @@ class QuestionController extends AbstractActionController
         else if ( $answerManager->getActiveQuestion()->getTries()){
             $message = [ 'message' => 'Sorry. Your answer was incorrect. Please try again.',
                 'type' => 'incorrect' ];
-            return $this->getView($message);
+            return $this->getView($message, $score);
         }
 
         $this->updateScores($answerManager->getLastActiveQuestion());
         $message = [ 'message' => 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText(),
                      'type' => 'last-question' ];
-        return $this->getView($message);
+        return $this->getView($message, $score);
     }
 
     private function updateScores($lastActiveQuestion) {
@@ -71,8 +72,7 @@ class QuestionController extends AbstractActionController
        if ($this->sessionContainer->activeQuestion){
           $answerManager->setActiveQuestion($this->sessionContainer->activeQuestion);
        }
-       # $answerManager->setTries($this->sessionContainer->tries);
-       # $answerManager->setDirection($this->sessionContainer->direction);
+
        return $this;
     }
 
@@ -80,12 +80,11 @@ class QuestionController extends AbstractActionController
     {
     
        $this->sessionContainer->activeQuestion = $answerManager->getActiveQuestion();
-       # $this->sessionContainer->tries = $answerManager->getTries();
-       # $this->sessionContainer->direction = $answerManager->getDirection();
+
        return $this;
     }
 
-    private function getView($message = []) {
+    private function getView($message = [], $score = []) {
 
         $question = $this->answerManager->getActiveQuestion();
         $form = new QuestionForm();
@@ -95,6 +94,7 @@ class QuestionController extends AbstractActionController
 
         $view =  new ViewModel([
             'message' => $message,
+            'score' => $score,
             'form' => $form
         ]);
         return $view;
