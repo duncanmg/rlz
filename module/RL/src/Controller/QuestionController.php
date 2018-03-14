@@ -49,12 +49,14 @@ class QuestionController extends AbstractActionController
             return $this->redirect()->toRoute('question', ['action' => 'index']);
         }
         else if ( $answerManager->getActiveQuestion()->getTries()){
-            $message = 'Sorry. Your answer was incorrect. Please try again.';
+            $message = [ 'message' => 'Sorry. Your answer was incorrect. Please try again.',
+                'type' => 'incorrect' ];
             return $this->getView($message);
         }
 
         $this->updateScores($answerManager->getLastActiveQuestion());
-        $message = 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText();
+        $message = [ 'message' => 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText(),
+                     'type' => 'last-question' ];
         return $this->getView($message);
     }
 
@@ -83,7 +85,7 @@ class QuestionController extends AbstractActionController
        return $this;
     }
 
-    private function getView($message = '') {
+    private function getView($message = []) {
 
         $question = $this->answerManager->getActiveQuestion();
         $form = new QuestionForm();

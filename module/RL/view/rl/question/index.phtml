@@ -1,9 +1,10 @@
 <?php
 $title = 'Translate question';
 $this->headTitle($title);
+$message_class = $message['type'] == 'incorrect' ? 'bg-danger' : 'bg-info';
 ?>
 <h1><?= $this->escapeHtml($title) ?></h1>
-<p><?= $message ?></p>
+<p class="<?= $message_class ?>"><?= $message['message'] ?></p>
 <?php
 // This provides a default CSS class and placeholder text for the title element:
 $question = $form->get('question');
