@@ -25,6 +25,7 @@ class AnswerManager
     {
        $activeQuestion = $this->getActiveQuestion();
 
+       $correct = false;
        if ($doNotKnow){
            $activeQuestion->doNotKnow();
        }
