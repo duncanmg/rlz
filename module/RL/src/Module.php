@@ -52,6 +52,9 @@ class Module implements ConfigProviderInterface
                 Model\ScoreManager::class => function ($container) {
                     return new Model\ScoreManager($container->get(Model\UserQuestionTable::class));
                 },
+                Model\SessionScoreManager::class => function ($container) {
+                    return new Model\SessionScoreManager();
+                },
             ],
         ];
     }
@@ -70,7 +73,8 @@ class Module implements ConfigProviderInterface
                         $container->get(Model\QuestionTable::class),
                         $container->get(Model\AnswerManager::class),
                         $container->get('RLContainerNamespace'),
-                        $container->get(Model\ScoreManager::class)
+                        $container->get(Model\ScoreManager::class),
+                        $container->get(Model\SessionScoreManager::class)
                     );
                 },
             ],

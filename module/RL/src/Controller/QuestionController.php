@@ -5,9 +5,9 @@ namespace RL\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use RL\Model\QuestionTable;
-use RL\Model\Question;
 use RL\Model\AnswerManager;
 use RL\Model\ScoreManager;
+use RL\Model\SessionScoreManager;
 use Zend\Session\Container;
 
 use RL\Form\QuestionForm;
@@ -19,46 +19,70 @@ class QuestionController extends AbstractActionController
     private $answerManager;
     private $sessionContainer;
     private $scoreManager;
+    private $sessionScoreManager;
 
-    public function __construct(QuestionTable $table, AnswerManager $answerManager, Container $sessionContainer, ScoreManager $scoreManager)
+    public function __construct(QuestionTable $table, AnswerManager $answerManager, 
+       Container $sessionContainer, ScoreManager $scoreManager,
+       SessionScoreManager $sessionScoreManager)
     {
         $this->table = $table;
         $this->answerManager = $answerManager;
         $this->sessionContainer = $sessionContainer;
         $this->scoreManager = $scoreManager;
+        $this->sessionScoreManager = $sessionScoreManager;
 
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function indexAction()
     {
         $request = $this->getRequest();
 
         $answerManager = $this->answerManager;
-        $this->fromSession($answerManager);
+        $this->fromSession();
 
-        $score = [ 'asked' => 0, 'correct' => 0, 'incorrect' => 0 ];
         if (! $request->isPost()) {
-            return $this->getView( [], $score);
+            return $this->getView( [], $this->sessionScoreManager->getSessionScore());
         }
 
-        $correct = $answerManager->checkAnswer($request->getPost()->answer, $request->getPost()->donotknow);
-
-        $this->toSession($answerManager);
-
-        if($correct) {
-            $this->updateScores($answerManager->getLastActiveQuestion());
-            return $this->redirect()->toRoute('question', ['action' => 'index']);
+        $status = $answerManager->checkAnswer($request->getPost()->answer, $request->getPost()->donotknow);
+        
+        if ($status == "correct" || $status == "incorrect") {
+              $this->updateScores($answerManager->getLastActiveQuestion());
+              $this->sessionScoreManager->updateSessionScore($answerManager->getLastActiveQuestion());
         }
-        else if ( $answerManager->getActiveQuestion()->getTries()){
-            $message = [ 'message' => 'Sorry. Your answer was incorrect. Please try again.',
-                'type' => 'incorrect' ];
-            return $this->getView($message, $score);
-        }
+ 
+        $this->toSession();
+        
+        return $this->getView($status);
+    }
 
-        $this->updateScores($answerManager->getLastActiveQuestion());
-        $message = [ 'message' => 'The correct answer to the last question was: ' . $answerManager->getLastActiveQuestion()->getAnswerText(),
-                     'type' => 'last-question' ];
-        return $this->getView($message, $score);
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+    private function getView($status) {
+
+        if ($status == retry) {
+            $this->redirect()->toRoute('question', ['action' => 'index']);
+        }
+        
+        $am = $this->getAnswerManager();
+        $question = $am->getActiveQuestion();
+
+        $form = new QuestionForm();
+        $form->get('submit')->setValue('Submit Answer');
+
+        $form->get('question')->setValue($question->getQuestionText());
+
+        $view =  new ViewModel([
+            'status' => $status,
+            'answerToLastQuestion' => $am->getLastActiveQuestion()->getAnswerText(),
+            'score' => $this->getSessionScoreManager->getSessionScore(),
+            'form' => $form
+        ]);
+        return $view;
     }
 
     private function updateScores($lastActiveQuestion) {
@@ -67,37 +91,35 @@ class QuestionController extends AbstractActionController
          ->update();   
     }
 
-    private function fromSession($answerManager)
+    private function fromSession()
     {
        if ($this->sessionContainer->activeQuestion){
-          $answerManager->setActiveQuestion($this->sessionContainer->activeQuestion);
+          $this->getAnswerManager()->setActiveQuestion($this->sessionContainer->activeQuestion);
        }
 
+        if ($this->sessionContainer->sessionScore){
+          $this->getSessionScoreManager()->setSessionScore($this->sessionContainer->sessionScore);
+        }
+
        return $this;
     }
 
-    private function toSession($answerManager)
+    private function toSession()
     {
-    
-       $this->sessionContainer->activeQuestion = $answerManager->getActiveQuestion();
-
+       $this->sessionContainer->activeQuestion = $this->getAnswerManager()->getActiveQuestion();
+       $this->sessionContainer->sessionScore = $this->getSessionScoreManager->getSessionScore();
        return $this;
     }
 
-    private function getView($message = [], $score = []) {
-
-        $question = $this->answerManager->getActiveQuestion();
-        $form = new QuestionForm();
-        $form->get('submit')->setValue('Submit Answer');
-
-        $form->get('question')->setValue($question->getQuestionText());
-
-        $view =  new ViewModel([
-            'message' => $message,
-            'score' => $score,
-            'form' => $form
-        ]);
-        return $view;
+    private function getAnswerManager() {
+        return $this->answerManager();
     }
-
+    
+    private function getScoreManager() {
+       return $this->scoreManager;
+    }
+    
+    private function getSessionScoreManager() {
+        return $this->sessionScoreManager;
+    }
 }

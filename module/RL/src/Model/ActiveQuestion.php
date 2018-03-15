@@ -1,8 +1,7 @@
 <?php
 namespace RL\Model;
 
-use RL\Model\Question;
-use Exception;
+use Question;
 
 class ActiveQuestion
 {
@@ -11,7 +10,9 @@ class ActiveQuestion
     private $direction;
     private $tries;
     private $answer;
-
+    private $isFrozen;
+    private $status;
+    
     public function _construct() {
     }
 
@@ -21,6 +22,8 @@ class ActiveQuestion
         $this->correct = !empty($data['correct']) ? $data['correct'] : false;
         $this->direction  = !empty($data['direction']) ? $data['direction'] : null;
         $this->tries  = !empty($data['tries']) ? $data['tries'] : 0;
+        $this->isFrozen = false;
+        $this->setStatus('new');
     }
 
     public function getArrayCopy()
@@ -33,21 +36,27 @@ class ActiveQuestion
         ];
     }
 
+    public function getStatus() {
+      return $this->status;    
+    }
+    
     public function check($answer) {
       if ($this->getAnswerText() == $answer) {
-         $this->setCorrect(true);
-         return true;
+         $this->setStatus('correct');
       }
       else {
          $this->incrementTries();
+         $this->setStatus($this->allowMoreTries() ? 'retry' : 'incorrect');
          return false;
       }
+      return $this;
     }
 
     public function doNotKnow() {
       while ($this->allowMoreTries()) {
           $this->incrementTries();
       }
+      $this->setStatus('incorrect');
     }
 
     public function getQuestion() {
@@ -58,15 +67,6 @@ class ActiveQuestion
         $this->exceptionIfFrozen( $this->question);
         $this->question = $question;
         return $this;
-    }
-
-    public function getCorrect() {
-      return $this->correct;
-    }
-
-    private function setCorrect($correct) {
-      $this->correct = $correct;
-      return $this;
     }
 
     public function getDirection() {
@@ -83,11 +83,6 @@ class ActiveQuestion
       return $this->tries;
     }
 
-    private function setTries($tries) {
-      $this->tries = $tries;
-      return $this;
-    }
-
     public function getAnswerText() {
       $q = $this->getQuestion();
       return ($this->getDirection() == 'QA') ? $q->answer : $q->question;
@@ -98,18 +93,61 @@ class ActiveQuestion
       return ($this->getDirection() == 'QA') ? $q->question : $q->answer;
     }
 
-    public function incrementTries() {
-       $this->setTries($this->getTries() + 1);
+    public function isFrozen() {
+      return in_array($this->getStatus(), [ 'correct', 'wrong'])
+              ? true : false;
     }
 
-    public function allowMoreTries() {
-       return ($this->getTries() >= 3) ? false : true;
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    private function getCorrect() {
+      return $this->correct;
+    }
+
+    private function incrementTries() {
+       $this->setTries($this->getTries() + 1);
+       $this->allowMoreTries();
+       return $this;
+    }
+
+    private function allowMoreTries() {
+       if ($this->getTries() >= 3) {
+         $this->freeze();
+         return false;
+       }
+       return true;
+    }
+
+    private function freeze() {
+      $this->isFrozen = true;
+      return $this;
     }
 
     private function exceptionIfFrozen($test) {
       if ($test) {
          throw new \Exception("This ActiveQuestion is frozen");
       }
+    }
+
+    private function setCorrect($correct) {
+      $this->correct = $correct;
+      $this->freeze();
+      return $this;
+    }
+    
+    private function setTries($tries) {
+      $this->tries = $tries;
+      return $this;
+    }
+ 
+    private function setStatus($status) {
+        $validStatuses = [ 'new', 'correct', 'retry', 'incorrect'];
+        if (in_array($status, $validStatuses)) {
+            throw new \Exception('Invalid status ' . $status);
+        }
+        $this->status = $status;
+        return $this;
     }
 }
 

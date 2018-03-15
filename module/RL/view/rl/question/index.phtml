@@ -1,7 +1,17 @@
 <?php
 $title = 'Translate question';
 $this->headTitle($title);
-$message_class = $message['type'] == 'incorrect' ? 'bg-danger' : 'bg-info';
+switch($status){
+    case 'retry':
+        $message = 'Sorry. Your answer was incorrect. Please try again.';
+        break;
+    case 'incorrect':
+        $message = 'The correct answer to the last question was: ' . $answerToLastQuestion;
+        break;
+    default:
+        $message = "";
+}
+$message_class = $status == 'incorrect' ? 'bg-danger' : 'bg-info';
 ?>
 <h1><?= $this->escapeHtml($title) ?></h1>
 <div>
@@ -17,7 +27,7 @@ $message_class = $message['type'] == 'incorrect' ? 'bg-danger' : 'bg-info';
 </tr>
 </table>
 </div>
-<div><p class="<?= $message_class ?>"><?= $message['message'] ?></p></div>
+<div><p class="<?= $message_class ?>"><?= $message ?></p></div>
 <?php
 // This provides a default CSS class and placeholder text for the title element:
 $question = $form->get('question');

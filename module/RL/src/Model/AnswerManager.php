@@ -25,34 +25,42 @@ class AnswerManager
     {
        $activeQuestion = $this->getActiveQuestion();
 
-       $correct = false;
        if ($doNotKnow){
            $activeQuestion->doNotKnow();
        }
        else {
-           $correct = $activeQuestion->check($answer);
+           $activeQuestion->check($answer);
        }
 
-       if( $correct){
-
-          $this->reset();
-          return true;
-
-       }
-       else {
-
-          if ($activeQuestion->allowMoreTries()){
-              return false;
-
-          }
-          else {
-              $this->reset();
-              return false;
-
-          }
-       }
+       $status = $activeQuestion->getStatus();
+       switch ($status){
+           case 'correct':
+               $this->reset();
+               break;
+           case 'retry':
+               break;
+           case 'incorrect':
+               $this->reset();
+               break;
+       } 
+       return $status;
+    }
+    
+    public function getLastActiveQuestion() {
+        return $this->lastActiveQuestion;
     }
 
+    public function getActiveQuestion() {
+        if (! $this->activeQuestion) {
+            $this->activeQuestion = new ActiveQuestion();
+               $this->activeQuestion->setQuestion($this->getQuestion())
+              ->setDirection($this->getDirection());
+        }
+        return $this->activeQuestion;
+    }
+    
+    # **************************************************************
+    
     private function reset() {
           $this->setLastActiveQuestion();
           $this->resetQuestionId();
@@ -76,16 +84,6 @@ class AnswerManager
 
     private function resetActiveQuestion() {
       $this->activeQuestion="";
-    }
-
-    private function incrementTries() {
-      
-      $this->setTries($this->getTries()+1);
-      return $this;
-    }
-
-    private function checkTriesOk() {
-      return ($this->getTries() < 3) ? true : false;
     }
 
     private function getQuestion() {
@@ -123,10 +121,6 @@ class AnswerManager
       return $this;
     }
 
-    public function getLastActiveQuestion() {
-        return $this->lastActiveQuestion;
-    }
-
     private function setLastActiveQuestion() {
         $this->lastActiveQuestion = $this->getActiveQuestion();
         return $this;
@@ -135,15 +129,6 @@ class AnswerManager
     public function setActiveQuestion(ActiveQuestion $activeQuestion) {
         $this->activeQuestion = $activeQuestion;
         return $this;
-    }
-
-    public function getActiveQuestion() {
-        if (! $this->activeQuestion) {
-            $this->activeQuestion = new ActiveQuestion();
-               $this->activeQuestion->setQuestion($this->getQuestion())
-              ->setDirection($this->getDirection());
-        }
-        return $this->activeQuestion;
     }
 
 }
