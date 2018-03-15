@@ -9,6 +9,9 @@ use RL\Model\Question;
 
 use RL\Form\QuestionAdminForm;
 
+/**
+ * 
+ */
 class QuestionAdminController extends AbstractActionController
 {
 
@@ -19,6 +22,10 @@ class QuestionAdminController extends AbstractActionController
         $this->table = $table;
     }
 
+    /**
+     * 
+     * @return ViewModel
+     */
     public function indexAction()
     {
         return new ViewModel([
@@ -26,6 +33,10 @@ class QuestionAdminController extends AbstractActionController
         ]);
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function addAction()
     {
         $form = new QuestionAdminForm();
@@ -50,6 +61,10 @@ class QuestionAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin');
     }
 
+    /**
+     * 
+     * @return QuestionAdminForm
+     */
     public function editAction()
     {
         $id = (int) $this->params()->fromRoute('id', 0);
@@ -91,6 +106,10 @@ class QuestionAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin', ['action' => 'index']);
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function deleteAction()
     {
         $id = (int) $this->params()->fromRoute('id', 0);
