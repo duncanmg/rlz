@@ -20,7 +20,9 @@
         "zendframework/zend-form": "^2.11.0",
         "zendframework/zend-inputfilter": "^2.8.0",
         "zendframework/zend-mvc-i18n": "^1.0.0",
-        "zendframework/zend-session": "^2.8"
+        "zendframework/zend-session": "^2.8",
+        "phpunit/phpunit": "^6.5",
+        "zendframework/zend-test": "^3.1"
     },
     "autoload": {
         "psr-4": {
