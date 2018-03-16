@@ -45,7 +45,7 @@ class QuestionController extends AbstractActionController
         $this->fromSession();
 
         if (! $request->isPost()) {
-            return $this->getView( [], $this->sessionScoreManager->getSessionScore());
+            return $this->getView( $answerManager->getActiveQuestion()->getStatus());
         }
 
         $status = $answerManager->checkAnswer($request->getPost()->answer, $request->getPost()->donotknow);
@@ -64,31 +64,29 @@ class QuestionController extends AbstractActionController
  
     private function getView($status) {
 
-        if ($status == retry) {
-            $this->redirect()->toRoute('question', ['action' => 'index']);
-        }
-        
         $am = $this->getAnswerManager();
         $question = $am->getActiveQuestion();
+
+        $answerToLastQuestion = $am->getLastActiveQuestion() ? $am->getLastActiveQuestion()->getAnswerText() : "";
 
         $form = new QuestionForm();
         $form->get('submit')->setValue('Submit Answer');
 
         $form->get('question')->setValue($question->getQuestionText());
 
-        $view =  new ViewModel([
+        $view = new ViewModel([
             'status' => $status,
-            'answerToLastQuestion' => $am->getLastActiveQuestion()->getAnswerText(),
-            'score' => $this->getSessionScoreManager->getSessionScore(),
+            'answerToLastQuestion' => $answerToLastQuestion,
+            'score' => $this->getSessionScoreManager()->getSessionScore(),
             'form' => $form
         ]);
         return $view;
     }
 
     private function updateScores($lastActiveQuestion) {
-       $this->scoreManager->setUserId(1)
-         ->setActiveQuestion($lastActiveQuestion)
-         ->update();   
+        $this->scoreManager->setUserId(1)
+                ->setActiveQuestion($lastActiveQuestion)
+                ->update();
     }
 
     private function fromSession()
@@ -107,12 +105,12 @@ class QuestionController extends AbstractActionController
     private function toSession()
     {
        $this->sessionContainer->activeQuestion = $this->getAnswerManager()->getActiveQuestion();
-       $this->sessionContainer->sessionScore = $this->getSessionScoreManager->getSessionScore();
+       $this->sessionContainer->sessionScore = $this->getSessionScoreManager()->getSessionScore();
        return $this;
     }
 
     private function getAnswerManager() {
-        return $this->answerManager();
+        return $this->answerManager;
     }
     
     private function getScoreManager() {

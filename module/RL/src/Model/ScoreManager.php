@@ -66,14 +66,20 @@ class ScoreManager
     }
 
     public function update() {
-       $aq = $this->getActiveQuestion();
-       if ($aq->getCorrect()){
-         $this->incrementScore();
-       }
-       else {
-         $this->decrementScore();
-       }
-       $this->persist();
+        $aq = $this->getActiveQuestion();
+        $status = $aq->getStatus();
+
+        switch ($status) {
+            case 'correct':
+                $this->incrementScore();
+                break;
+            case 'incorrect':
+                $this->decrementScore();
+                break;
+            default:
+                throw new \Exception('ActiveQuestion is at the wrong status ' . $status);
+        }
+        $this->persist();
     }
 
     private function incrementScore() {

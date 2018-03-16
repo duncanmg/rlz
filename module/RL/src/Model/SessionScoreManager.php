@@ -1,8 +1,6 @@
 <?php
 namespace RL\Model;
 
-use Exception;
-
 class SessionScoreManager
 {
 
@@ -18,14 +16,24 @@ class SessionScoreManager
         return $this->sessionScore;
     }
 
-    public function setSessionScore(\ArrayObject $question) {
+    public function setSessionScore(\ArrayObject $sessionScore) {
         $this->sessionScore = $sessionScore;
         return $this;
     }
 
     public function updateSessionScore(ActiveQuestion $activeQuestion) {
-        $activeQuestion->getCorrect() ? $this->updateCorrect() 
-          : $this->updateInCorrect();
+        $status = $activeQuestion->getStatus();
+        switch ($status) {
+            case 'correct':
+                $this->updateCorrect();
+                break;
+            case 'incorrect':
+                $this->updateInCorrect();
+                break;
+            default :
+                throw new \Exception('ActiveQuestion is at wrong state.' . $status);
+        }
+
         return $this;
     }
 

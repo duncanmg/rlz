@@ -11,7 +11,7 @@ switch($status){
     default:
         $message = "";
 }
-$message_class = $status == 'incorrect' ? 'bg-danger' : 'bg-info';
+$message_class = ($status == 'incorrect') ? 'bg-danger' : 'bg-info';
 ?>
 <h1><?= $this->escapeHtml($title) ?></h1>
 <div>

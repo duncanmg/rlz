@@ -42,7 +42,7 @@ class AnswerManager
            case 'incorrect':
                $this->reset();
                break;
-       } 
+       }
        return $status;
     }
     

@@ -1,7 +1,7 @@
 <?php
 namespace RL\Model;
 
-use Question;
+use RL\Model\Question;
 
 class ActiveQuestion
 {
@@ -143,7 +143,7 @@ class ActiveQuestion
  
     private function setStatus($status) {
         $validStatuses = [ 'new', 'correct', 'retry', 'incorrect'];
-        if (in_array($status, $validStatuses)) {
+        if (!in_array($status, $validStatuses)) {
             throw new \Exception('Invalid status ' . $status);
         }
         $this->status = $status;
