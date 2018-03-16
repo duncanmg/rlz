@@ -1,7 +1,12 @@
 <?php
 $language = $activeQuestion['direction'] == 'AQ' ? 'English' : 'French';
+$language = $activeQuestion['direction'] == 'AQ' ? 'English' : 'French';
 $title = 'Please translate the question below into ' . $language;
-$this->headTitle($title);
+$answerPlaceholder = $language == 'English'
+  ? 'Please type your ' . $language . ' translation here. Omit the definite artice. eg le chien -> dog'
+  :  'Please type your ' . $language . ' translation here. Inclde the definite artice. eg dog -> le chien';
+
+$this->headTitle('Translate Question');
 switch ($status) {
     case 'retry':
         $message = 'Sorry. Your answer was incorrect. Please try again.';
@@ -14,9 +19,8 @@ switch ($status) {
 }
 $message_class = ($status == 'incorrect') ? 'bg-danger' : 'bg-info';
 ?>
-<h1><?= $this->escapeHtml($title) ?></h1>
 <div>
-<h2>Score for this session</h2>
+<h3>Score for this session</h3>
 <table class="table table-bordered">
 <tr>
 <td>Number of Questions Asked</td><td>Correct</td><td>Wrong</td>
@@ -28,6 +32,7 @@ $message_class = ($status == 'incorrect') ? 'bg-danger' : 'bg-info';
 </tr>
 </table>
 </div>
+<h1><?= $this->escapeHtml($title) ?></h1>
 <div><p class="<?= $message_class ?>"><?= $message ?></p></div>
 <?php
 // This provides a default CSS class and placeholder text for the title element:
@@ -38,7 +43,7 @@ $question->setAttribute('placeholder', 'Question');
 // This provides a default CSS class and placeholder text for the artist element:
 $answer = $form->get('answer');
 $answer->setAttribute('class', 'form-control');
-$answer->setAttribute('placeholder', 'Answer');
+$answer->setAttribute('placeholder', $answerPlaceholder);
 
 // This provides CSS classes for the submit button:
 $submit = $form->get('submit');
