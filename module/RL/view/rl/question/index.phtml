@@ -1,12 +1,13 @@
 <?php
-$title = 'Translate question';
+$language = $activeQuestion['direction'] == 'AQ' ? 'English' : 'French';
+$title = 'Please translate the question below into ' . $language;
 $this->headTitle($title);
-switch($status){
+switch ($status) {
     case 'retry':
         $message = 'Sorry. Your answer was incorrect. Please try again.';
         break;
     case 'incorrect':
-        $message = 'The correct answer to the last question was: ' . $answerToLastQuestion;
+        $message = 'The correct answer to the last question was: ' . $lastActiveQuestion['answer'];
         break;
     default:
         $message = "";

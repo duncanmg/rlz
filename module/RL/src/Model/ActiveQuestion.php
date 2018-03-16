@@ -16,23 +16,22 @@ class ActiveQuestion
     public function _construct() {
     }
 
-    public function exchangeArray(array $data)
-    {
-        $this->question     = !empty($data['question']) ? $data['question'] : null;
-        $this->correct = !empty($data['correct']) ? $data['correct'] : false;
-        $this->direction  = !empty($data['direction']) ? $data['direction'] : null;
-        $this->tries  = !empty($data['tries']) ? $data['tries'] : 0;
-        $this->isFrozen = false;
-        $this->setStatus('new');
-    }
+    #public function exchangeArray(array $data)
+    #{
+    #    $this->question     = !empty($data['question']) ? $data['question'] : null;
+    #    $this->correct = !empty($data['correct']) ? $data['correct'] : false;
+    #    $this->direction  = !empty($data['direction']) ? $data['direction'] : null;
+    #    $this->tries  = !empty($data['tries']) ? $data['tries'] : 0;
+    #    $this->isFrozen = false;
+    #    $this->setStatus('new');
+    #}
 
-    public function getArrayCopy()
-    {
+    public function getArrayCopy() {
         return [
-            'question'     => $this->question,
-            'correct' => $this->correct,
-            'direction'  => $this->direction,
-            'tries'  => $this->tries,
+            'question' => $this->getQuestionText(),
+            'answer' => $this->getAnswerText(),
+            'status' => $this->getStatus(),
+            'direction' => $this->getDirection(),
         ];
     }
 

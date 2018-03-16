@@ -67,7 +67,7 @@ class QuestionController extends AbstractActionController
         $am = $this->getAnswerManager();
         $question = $am->getActiveQuestion();
 
-        $answerToLastQuestion = $am->getLastActiveQuestion() ? $am->getLastActiveQuestion()->getAnswerText() : "";
+        $lastActiveQuestionArray = $am->getLastActiveQuestion() ? $am->getLastActiveQuestion()->getArrayCopy() : [];
 
         $form = new QuestionForm();
         $form->get('submit')->setValue('Submit Answer');
@@ -75,8 +75,9 @@ class QuestionController extends AbstractActionController
         $form->get('question')->setValue($question->getQuestionText());
 
         $view = new ViewModel([
+            'activeQuestion' => $question->getArrayCopy(),
             'status' => $status,
-            'answerToLastQuestion' => $answerToLastQuestion,
+            'lastActiveQuestion' => $lastActiveQuestionArray,
             'score' => $this->getSessionScoreManager()->getSessionScore(),
             'form' => $form
         ]);
