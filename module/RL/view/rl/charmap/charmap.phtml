@@ -1,0 +1,23 @@
+
+<div style="width:15%;" class="charmap btn-group btn-matrix">
+  <button type="button" class="btn btn-primary">â</button>
+  <button type="button" class="btn btn-primary">à</button>
+  <button type="button" class="btn btn-primary">ê</button>
+  <button type="button" class="btn btn-primary">é</button>
+  <button type="button" class="btn btn-primary">è</button>
+  <button type="button" class="btn btn-primary">ë</button>
+  <button type="button" class="btn btn-primary">î</button>
+  <button type="button" class="btn btn-primary">ï</button>
+  <button type="button" class="btn btn-primary">ô</button>
+  <button type="button" class="btn btn-primary">û</button>
+  <button type="button" class="btn btn-primary">ù</button>
+  <button type="button" class="btn btn-primary">ü</button>
+  <button type="button" class="btn btn-primary">ç</button>
+</div> 
+<script>
+$(".charmap").find(".btn").click(function () {
+        var a = $("[name=answer]");
+        a.val(a.val()+ this.innerHTML);
+        return false;
+});
+</script>

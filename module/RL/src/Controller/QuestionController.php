@@ -74,6 +74,10 @@ class QuestionController extends AbstractActionController
 
         $form->get('question')->setValue($question->getQuestionText());
 
+        $charMapView = new ViewModel();
+        $charMapView->setTemplate('rl/charmap/charmap.phtml');
+        
+       
         $view = new ViewModel([
             'activeQuestion' => $question->getArrayCopy(),
             'status' => $status,
@@ -81,6 +85,9 @@ class QuestionController extends AbstractActionController
             'score' => $this->getSessionScoreManager()->getSessionScore(),
             'form' => $form
         ]);
+        
+        $view->addChild($charMapView,'block');
+        
         return $view;
     }
 
