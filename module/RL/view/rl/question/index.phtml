@@ -3,8 +3,8 @@ $language = $activeQuestion['direction'] == 'AQ' ? 'English' : 'French';
 $language = $activeQuestion['direction'] == 'AQ' ? 'English' : 'French';
 $title = 'Please translate the question below into ' . $language;
 $answerPlaceholder = $language == 'English'
-  ? 'Please type your ' . $language . ' translation here. Omit the definite artice. eg le chien -> dog'
-  :  'Please type your ' . $language . ' translation here. Inclde the definite artice. eg dog -> le chien';
+  ? 'Please type your ' . $language . ' translation here. Omit the definite article. eg le chien -> dog'
+  :  'Please type your ' . $language . ' translation here. Include the definite article. eg dog -> le chien';
 
 $this->headTitle('Translate Question');
 switch ($status) {
