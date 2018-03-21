@@ -3,11 +3,11 @@
 namespace RL\Form;
 
 use Zend\Form\Form;
+use Zend\Form\Element;
 
 class QuestionAdminForm extends Form
 {
-    public function __construct($name = null)
-    {
+    public function __construct($name = null) {
         // We will ignore the name provided to the constructor
         parent::__construct('question');
 
@@ -44,9 +44,19 @@ class QuestionAdminForm extends Form
             'type' => 'submit',
             'attributes' => [
                 'value' => 'Go',
-                'id'    => 'submitbutton',
+                'id' => 'submitbutton',
             ],
         ]);
 
+        $sourceSelect = new Element\Select('source_id');
+        $sourceSelect->setLabel('Translation source');
+        $sourceSelect->setEmptyOption('Where did you get the translation from?');
+        $sourceSelect->setValueOptions(['0' => 'French',
+            '1' => 'English',
+            '2' => 'Japanese',
+            '3' => 'Chinese',
+        ]);
+        $this->add($sourceSelect);
     }
+
 }

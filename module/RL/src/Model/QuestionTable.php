@@ -53,6 +53,7 @@ class QuestionTable
             'question' => $question->question,
             'answer'  => $question->answer,
             'aq_enabled_yn'  => $question->aq_enabled_yn,
+            'source_id'      => $question->source_id,
         ];
 
         $id = (int) $question->id;

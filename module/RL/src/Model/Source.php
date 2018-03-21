@@ -10,43 +10,31 @@ use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\Validator\StringLength;
 
-class Question implements InputFilterAwareInterface
-{
-    public $id;
-    public $question;
-    public $answer;
-    public $aq_enabled_yn;
+class Source implements InputFilterAwareInterface {
 
+    public $id;
+    public $description;
     private $inputFilter;
 
-    public function exchangeArray(array $data)
-    {
-        $this->id     = !empty($data['id']) ? $data['id'] : null;
-        $this->question = !empty($data['question']) ? $data['question'] : null;
-        $this->answer  = !empty($data['answer']) ? $data['answer'] : null;
-        $this->aq_enabled_yn  = !empty($data['aq_enabled_yn']) ? $data['aq_enabled_yn'] : 'Y';
+    public function exchangeArray(array $data) {
+        $this->id = !empty($data['id']) ? $data['id'] : null;
+        $this->description = !empty($data['description']) ? $data['description'] : null;
     }
 
-    public function getArrayCopy()
-    {
+    public function getArrayCopy() {
         return [
-            'id'     => $this->id,
-            'question' => $this->question,
-            'answer'  => $this->answer,
-            'aq_enabled_yn'  => $this->aq_enabled_yn,
+            'id' => $this->id,
+            'description' => $this->description,
         ];
     }
 
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
+    public function setInputFilter(InputFilterInterface $inputFilter) {
         throw new DomainException(sprintf(
-            '%s does not allow injection of an alternate input filter',
-            __CLASS__
+                '%s does not allow injection of an alternate input filter', __CLASS__
         ));
     }
 
-    public function getInputFilter()
-    {
+    public function getInputFilter() {
         if ($this->inputFilter) {
             return $this->inputFilter;
         }
@@ -62,45 +50,7 @@ class Question implements InputFilterAwareInterface
         ]);
 
         $inputFilter->add([
-            'name' => 'question',
-            'required' => true,
-            'filters' => [
-                ['name' => StripTags::class],
-                ['name' => StringTrim::class],
-            ],
-            'validators' => [
-                [
-                    'name' => StringLength::class,
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 1,
-                        'max' => 100,
-                    ],
-                ],
-            ],
-        ]);
-
-        $inputFilter->add([
-            'name' => 'answer',
-            'required' => true,
-            'filters' => [
-                ['name' => StripTags::class],
-                ['name' => StringTrim::class],
-            ],
-            'validators' => [
-                [
-                    'name' => StringLength::class,
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 1,
-                        'max' => 100,
-                    ],
-                ],
-            ],
-        ]);
-
-        $inputFilter->add([
-            'name' => 'aq_enabled_yn',
+            'name' => 'description',
             'required' => true,
             'filters' => [
                 ['name' => StripTags::class],
@@ -121,5 +71,5 @@ class Question implements InputFilterAwareInterface
         $this->inputFilter = $inputFilter;
         return $this->inputFilter;
     }
-}
 
+}

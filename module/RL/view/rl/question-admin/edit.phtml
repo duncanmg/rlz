@@ -16,6 +16,9 @@ $aq_enabled_yn = $form->get('aq_enabled_yn');
 $aq_enabled_yn->setAttribute('class', 'form-control');
 $aq_enabled_yn->setAttribute('placeholder', 'AQ Enabled Y/N');
 
+$sourceId = $form->get('source_id');
+$sourceId->setAttribute('class','form-control');
+
 $submit = $form->get('submit');
 $submit->setAttribute('class', 'btn btn-primary');
 
@@ -43,6 +46,12 @@ echo $this->form()->openTag($form);
     <?= $this->formLabel($aq_enabled_yn) ?>
     <?= $this->formElement($aq_enabled_yn) ?>
     <?= $this->formElementErrors()->render($aq_enabled_yn, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($sourceId) ?>
+    <?= $this->formElement($sourceId) ?>
+    <?= $this->formElementErrors()->render($sourceId, ['class' => 'help-block']) ?>
 </div>
 
 <?php

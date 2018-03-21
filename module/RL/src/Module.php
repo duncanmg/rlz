@@ -31,6 +31,10 @@ class Module implements ConfigProviderInterface
                     $tableGateway = $container->get(Model\UserQuestionTableGateway::class);
                     return new Model\UserQuestionTable($tableGateway);
                 },
+                Model\SourceTable::class => function($container) {
+                    $tableGateway = $container->get(Model\SourceTableGateway::class);
+                    return new Model\SourceTable($tableGateway);
+                },           
                 Model\QuestionTableGateway::class => function ($container) {
                     $dbAdapter = $container->get(AdapterInterface::class);
                     $resultSetPrototype = new ResultSet();
@@ -43,6 +47,12 @@ class Module implements ConfigProviderInterface
                     $resultSetPrototype->setArrayObjectPrototype(new Model\UserQuestion());
                     return new TableGateway('user_question', $dbAdapter, null, $resultSetPrototype);
                 },
+                Model\SourceTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get(AdapterInterface::class);
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Source());
+                    return new TableGateway('source', $dbAdapter, null, $resultSetPrototype);
+                },       
                 Model\AnswerManager::class => function ($container) {
                     return new Model\AnswerManager($container->get(Model\QuestionTable::class));
                 },
@@ -65,7 +75,8 @@ class Module implements ConfigProviderInterface
             'factories' => [
                 Controller\QuestionAdminController::class => function($container) {
                     return new Controller\QuestionAdminController(
-                        $container->get(Model\QuestionTable::class)
+                        $container->get(Model\QuestionTable::class),
+                        $container->get(Model\SourceTable::class)    
                     );
                 },
                 Controller\QuestionController::class => function($container) {

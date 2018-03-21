@@ -6,6 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use RL\Model\QuestionTable;
 use RL\Model\Question;
+use RL\Model\SourceTable;
 
 use RL\Form\QuestionAdminForm;
 
@@ -18,10 +19,12 @@ class QuestionAdminController extends AbstractActionController
     use CharMapTrait;
     
     private $table;
-
-    public function __construct(QuestionTable $table)
+    private $sourceTable;
+    
+    public function __construct(QuestionTable $questionTable, SourceTable $sourceTable)
     {
-        $this->table = $table;
+        $this->table = $questionTable;
+        $this->sourceTable = $sourceTable;
     }
 
     /**
@@ -40,8 +43,7 @@ class QuestionAdminController extends AbstractActionController
      * @return type
      */
     public function addAction() {
-        $form = new QuestionAdminForm();
-        $form->get('submit')->setValue('Add');
+        $form = $this->getForm('Add');
 
         $request = $this->getRequest();
 
@@ -51,15 +53,16 @@ class QuestionAdminController extends AbstractActionController
         if (!$request->isPost()) {
             return $view;
         }
-
+        
+        # $sourceId = $this->params()->fromPost('source_id');
+                
         $question = new Question();
         $form->setInputFilter($question->getInputFilter());
         $form->setData($request->getPost());
 
         if (!$form->isValid()) {
-            return $view;
+            return $view;  
         }
-
         $question->exchangeArray($form->getData());
         $this->table->saveQuestion($question);
         return $this->redirect()->toRoute('admin');
@@ -75,7 +78,7 @@ class QuestionAdminController extends AbstractActionController
         if (0 === $id) {
             return $this->redirect()->toRoute('admin', ['action' => 'add']);
         }
-
+        
         // Retrieve the question with the specified id. Doing so raises
         // an exception if the question is not found, which should result
         // in redirecting to the landing page.
@@ -85,9 +88,8 @@ class QuestionAdminController extends AbstractActionController
             return $this->redirect()->toRoute('admin', ['action' => 'index']);
         }
 
-        $form = new QuestionAdminForm();
+        $form = $this->getForm('Edit');
         $form->bind($question);
-        $form->get('submit')->setAttribute('value', 'Edit');
 
         $request = $this->getRequest();
         $viewData = ['id' => $id, 'form' => $form];
@@ -141,4 +143,18 @@ class QuestionAdminController extends AbstractActionController
             'question' => $this->table->getQuestion($id),
         ];
     }
+    
+    private function getForm($submitLabel = 'Submit') {
+        $form = new QuestionAdminForm();
+        $form->get('submit')->setValue($submitLabel);
+
+        $sources = $this->sourceTable->fetchAll();
+        $sourcesArray = [];
+        foreach ($sources as $s) {
+            $sourcesArray[$s->id] = $s->description;
+        }
+        $form->get('source_id')->setValueOptions($sourcesArray);
+        return $form;
+    }
+
 }

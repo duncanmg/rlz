@@ -16,6 +16,7 @@ class Question implements InputFilterAwareInterface
     public $question;
     public $answer;
     public $aq_enabled_yn;
+    public $source_id;
 
     private $inputFilter;
 
@@ -25,6 +26,7 @@ class Question implements InputFilterAwareInterface
         $this->question = !empty($data['question']) ? $data['question'] : null;
         $this->answer  = !empty($data['answer']) ? $data['answer'] : null;
         $this->aq_enabled_yn  = !empty($data['aq_enabled_yn']) ? $data['aq_enabled_yn'] : 'Y';
+        $this->source_id = !empty($data['source_id']) ? $data['source_id'] : null;
     }
 
     public function getArrayCopy()
@@ -34,6 +36,7 @@ class Question implements InputFilterAwareInterface
             'question' => $this->question,
             'answer'  => $this->answer,
             'aq_enabled_yn'  => $this->aq_enabled_yn,
+            'source_id' => $this->source_id,
         ];
     }
 
@@ -118,6 +121,16 @@ class Question implements InputFilterAwareInterface
             ],
         ]);
 
+        $inputFilter->add([
+            'name' => 'source_id',
+            'required' => true,
+            'validators' => [],
+            'filters' => [
+                 ['name' => ToInt::class],
+              
+            ],
+        ]);
+    
         $this->inputFilter = $inputFilter;
         return $this->inputFilter;
     }
