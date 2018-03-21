@@ -47,7 +47,9 @@ class QuestionController extends AbstractActionController
         $this->fromSession();
 
         if (! $request->isPost()) {
-            return $this->getView( $answerManager->getActiveQuestion()->getStatus());
+            $view = $this->getView( $answerManager->getActiveQuestion()->getStatus());
+            $this->toSession();
+            return $view;
         }
 
         $status = $answerManager->checkAnswer($request->getPost()->answer, $request->getPost()->donotknow);
