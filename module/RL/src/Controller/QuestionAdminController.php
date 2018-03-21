@@ -15,6 +15,8 @@ use RL\Form\QuestionAdminForm;
 class QuestionAdminController extends AbstractActionController
 {
 
+    use CharMapTrait;
+    
     private $table;
 
     public function __construct(QuestionTable $table)
@@ -37,23 +39,25 @@ class QuestionAdminController extends AbstractActionController
      * 
      * @return type
      */
-    public function addAction()
-    {
+    public function addAction() {
         $form = new QuestionAdminForm();
         $form->get('submit')->setValue('Add');
 
         $request = $this->getRequest();
 
-        if (! $request->isPost()) {
-            return ['form' => $form];
+        $viewModel = new ViewModel(['form' => $form]);
+        $view = $this->addCharMap($viewModel);
+
+        if (!$request->isPost()) {
+            return $view;
         }
 
         $question = new Question();
         $form->setInputFilter($question->getInputFilter());
         $form->setData($request->getPost());
 
-        if (! $form->isValid()) {
-            return ['form' => $form];
+        if (!$form->isValid()) {
+            return $view;
         }
 
         $question->exchangeArray($form->getData());
@@ -65,8 +69,7 @@ class QuestionAdminController extends AbstractActionController
      * 
      * @return QuestionAdminForm
      */
-    public function editAction()
-    {
+    public function editAction() {
         $id = (int) $this->params()->fromRoute('id', 0);
 
         if (0 === $id) {
@@ -89,15 +92,18 @@ class QuestionAdminController extends AbstractActionController
         $request = $this->getRequest();
         $viewData = ['id' => $id, 'form' => $form];
 
-        if (! $request->isPost()) {
-            return $viewData;
+        $viewModel = new ViewModel($viewData);
+        $view = $this->addCharMap($viewModel);
+
+        if (!$request->isPost()) {
+            return $view;
         }
 
         $form->setInputFilter($question->getInputFilter());
         $form->setData($request->getPost());
 
-        if (! $form->isValid()) {
-            return $viewData;
+        if (!$form->isValid()) {
+            return $view;
         }
 
         $this->table->saveQuestion($question);

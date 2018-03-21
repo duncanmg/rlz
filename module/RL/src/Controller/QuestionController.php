@@ -15,6 +15,8 @@ use RL\Form\QuestionForm;
 class QuestionController extends AbstractActionController
 {
 
+    use CharMapTrait;
+    
     private $table;
     private $answerManager;
     private $sessionContainer;
@@ -72,11 +74,7 @@ class QuestionController extends AbstractActionController
         $form = new QuestionForm();
         $form->get('submit')->setValue('Submit Answer');
 
-        $form->get('question')->setValue($question->getQuestionText());
-
-        $charMapView = new ViewModel();
-        $charMapView->setTemplate('rl/charmap/charmap.phtml');
-        
+        $form->get('question')->setValue($question->getQuestionText());        
        
         $view = new ViewModel([
             'activeQuestion' => $question->getArrayCopy(),
@@ -86,7 +84,7 @@ class QuestionController extends AbstractActionController
             'form' => $form
         ]);
         
-        $view->addChild($charMapView,'block');
+        $view = $this->addCharMap($view);
         
         return $view;
     }
