@@ -14,7 +14,7 @@ $this->headTitle($title);
     <th>Answer</th>
     <th>&nbsp;</th>
 </tr>
-<?php foreach ($questions as $question) : ?>
+<?php foreach ($paginator as $question) : ?>
     <tr>
         <td><?= $this->escapeHtml($question->question) ?></td>
         <td><?= $this->escapeHtml($question->answer) ?></td>
@@ -25,3 +25,15 @@ $this->headTitle($title);
     </tr>
 <?php endforeach; ?>
 </table>
+
+<?= $this->paginationControl(
+    // The paginator object:
+    $this->paginator,
+    // The scrolling style:
+    'sliding',
+    // The partial to use to render the control:
+    '/rl/partial/paginator',
+    // The route to link to when a user clicks a control link:
+    ['route' => 'admin']
+) ?>
+
