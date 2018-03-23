@@ -79,6 +79,9 @@ class Module implements ConfigProviderInterface
                         $container->get(Model\SourceTable::class)    
                     );
                 },
+                Controller\LoginController::class => function() {
+                    return new Controller\LoginController(                            );
+                },
                 Controller\QuestionController::class => function($container) {
                     return new Controller\QuestionController(
                         $container->get(Model\QuestionTable::class),
