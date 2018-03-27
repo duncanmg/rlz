@@ -14,22 +14,25 @@ and open the template in the editor.
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <script>
             function onSignIn(googleUser) {
-                alert('onSignIn');
-              var profile = googleUser.getBasicProfile();
-              console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                //alert('onSignIn');
+                var profile = googleUser.getBasicProfile();
+                console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
                 console.log('Name: ' + profile.getName());
                 console.log('Image URL: ' + profile.getImageUrl());
                 console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+                sendIdToken(profile, googleUser.getAuthResponse().id_token);
             }
-            //function sendIdToken(id_token) {
-            //    var xhr = new XMLHttpRequest();
-            //    xhr.open('POST', '/login/tokensignin');
-            //    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            //    xhr.onload = function () {
-            //        console.log('Signed in as: ' + xhr.responseText);
-            //    };
-            //    xhr.send('idtoken=' + id_token);
-            //}
+            function sendIdToken(profile, id_token) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/login/tokensignin');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function () {
+                    console.log('Signed in as: ' + xhr.responseText);
+                     document.location.href="/";
+                };
+                xhr.send('idtoken=' + id_token + '&name='+profile.getName() + '&email=' + profile.getEmail() + '&imageUrl=' + profile.getImageUrl() );
+         
+            }
         </script>
         Hi
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
@@ -43,7 +46,18 @@ and open the template in the editor.
                 });
             }
         </script>
+        <script>
+            window.onload = function () {
+                var auth2 = gapi.auth2.getAuthInstance();
 
+                // Sign-In
+                auth2.signIn()
+                        .then(onSignIn, function (error) {
+                            alert('Authentication failed.');
+                        });
+            };
+
+        </script>
         <?php
         // put your code here
         ?>

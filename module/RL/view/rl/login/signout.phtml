@@ -11,39 +11,29 @@ and open the template in the editor.
         <title></title>
     </head>
     <body>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <script>
-            function onSignIn(googleUser) {
-                alert('onSignIn');
-              var profile = googleUser.getBasicProfile();
-              console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-                console.log('Name: ' + profile.getName());
-                console.log('Image URL: ' + profile.getImageUrl());
-                console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-            }
-            //function sendIdToken(id_token) {
-            //    var xhr = new XMLHttpRequest();
-            //    xhr.open('POST', '/login/tokensignin');
-            //    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            //    xhr.onload = function () {
-            //        console.log('Signed in as: ' + xhr.responseText);
-            //    };
-            //    xhr.send('idtoken=' + id_token);
-            //}
-        </script>
-        Hi
+        <script src="https://apis.google.com/js/platform.js" async defer></script>    
+        Goodbye
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
-
-        <a href="#" onclick="signOut();">Sign out</a>
         <script>
             function signOut() {
                 var auth2 = gapi.auth2.getAuthInstance();
                 auth2.signOut().then(function () {
                     console.log('User signed out.');
-                });
+                    document.location.href = '/';
+                },
+                        function (error) {
+                            console.log('Signout failed ' + error);
+                            document.location.href = '/';
+                        });
             }
         </script>
+        <script>
+            window.onload = function () {
+                // alert('Goodbye');
+                signOut();
+            };
 
+        </script>
         <?php
         // put your code here
         ?>
