@@ -31,37 +31,40 @@ class LoginController extends AbstractActionController
         return new ViewModel;
     }
 
-    public function tokensigninAction()
-    {
-        //error_log('In tokensigninAction');
+    public function tokensigninAction() {
         $parameters = $this->getRequest()->getPost();
-        //error_log(print_r($parameters,true));
-        
+
         $client = new Google_Client();
-        //error_log('Got a client');
-        
+
         $aud = "960450020562-bij42s8ibvlc72igdaquu8ruengaenf9.apps.googleusercontent.com"; # My application name
-        $client->setApplicationName($aud); 
+        $client->setApplicationName($aud);
         $client->setDeveloperKey("R_8kDi-8OHbxSkaCFEUO4eqk"); # Simple API Key
 
-        //error_log('X0 ' . $parameters['idtoken']);
-        #$verify = new  Google_AccessToken_Verify($client);
-        //error_log('X1');
         $tokenData = $client->verifyIdToken($parameters['idtoken']);
-        //error_log('X2');
-        if ($tokenData) {
-            if ($tokenData['aud'] != $aud){
-                error_log('Invalid aud');
-            }
-            if ($tokenData['exp'] < time()){
-                error_log('Token has expired: ' . $tokenData['exp'].' < ' . time());
-            }
-           error_log(print_r(['Token validated' , $tokenData],true));
-        }
-        else {
-            error_log('Token invalid');
-        }
-        
+
+        $this->exceptionOnNoToken($tokenData);
+        $this->exceptionOnBadAud($tokenData, $aud);
+        $this->exceptionOnExpiredToken($tokenData);
+
         return new ViewModel;
     }
+
+    private function exceptionOnNoToken($tokenData) {
+        if (!$tokenData) {
+            throw new \Exception('Invalid token. No token returned.');
+        }
+    }
+
+    private function exceptionOnBadAud($tokenData, $aud) {
+        if ($tokenData['aud'] != $aud) {
+            throw new \Exception('Invalid token. Invalid aud ' . $aud);
+        }
+    }
+
+    private function exceptionOnExpiredToken($tokenData) {
+        if ($tokenData['exp'] < time()) {
+            throw new \Exception('Invalid token. Expired token. ' . $tokenData['exp'] . ' < ' . time());
+        }
+    }
+
 }
