@@ -74,23 +74,31 @@ return [
                 'route' => 'admin',
                 'pages' => [
                     [
-                        'label'  => 'Add',
-                        'route'  => 'admin',
+                        'label' => 'Add',
+                        'route' => 'admin',
                         'action' => 'add',
                     ],
                     [
-                        'label'  => 'Edit',
-                        'route'  => 'admin',
+                        'label' => 'Edit',
+                        'route' => 'admin',
                         'action' => 'edit',
                     ],
                     [
-                        'label'  => 'Delete',
-                        'route'  => 'admin',
+                        'label' => 'Delete',
+                        'route' => 'admin',
                         'action' => 'delete',
                     ],
                 ],
             ],
+            [
+                'label' => 'Sign In',
+                'route' => 'login',
+            ],
+            [
+                'label' => 'Sign Out',
+                'route' => 'login',
+                'action' => 'signout',
+            ],
         ],
     ],
-
 ];
