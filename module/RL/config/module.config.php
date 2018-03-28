@@ -60,6 +60,19 @@ return [
                         'action' => 'index',
                     ],
                 ],
+             ],    
+             'login-rest' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/tokensignin',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\LoginRestController::class
+                    ],
+                ],
             ],
         ],
     ],
@@ -67,6 +80,9 @@ return [
     'view_manager' => [
         'template_path_stack' => [
             'rl' => __DIR__ . '/../view',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
     // Session configuration.
