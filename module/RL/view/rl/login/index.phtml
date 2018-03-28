@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <meta name="google-signin-client_id" content="960450020562-bij42s8ibvlc72igdaquu8ruengaenf9.apps.googleusercontent.com">
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
+
         <script src="https://apis.google.com/js/platform.js" async defer></script>
+        
         <script>
             function onSignIn(googleUser) {
                 //alert('onSignIn');
@@ -28,16 +17,18 @@ and open the template in the editor.
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function () {
                     console.log('Signed in as: ' + xhr.responseText);
-                     document.location.href="/";
+                    document.location.href = "/";
                 };
-                xhr.send('idtoken=' + id_token + '&name='+profile.getName() + '&email=' + profile.getEmail() + '&imageUrl=' + profile.getImageUrl() );
-         
+                xhr.send('idtoken=' + id_token + '&name=' + profile.getName() + '&email=' + profile.getEmail() + '&imageUrl=' + profile.getImageUrl());
+
             }
         </script>
-        Hi
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
-
-        <a href="#" onclick="signOut();">Sign out</a>
+        
+        <div>Please sign-in using one of these providers.</div>
+        
+        <div class="g-signin2" data-onsuccess="onSignIn" data-visibility="hidden"></div>
+      
+        <!--<a href="#" onclick="signOut();">Sign out</a>-->
         <script>
             function signOut() {
                 var auth2 = gapi.auth2.getAuthInstance();
@@ -51,15 +42,14 @@ and open the template in the editor.
                 var auth2 = gapi.auth2.getAuthInstance();
 
                 // Sign-In
-                auth2.signIn()
-                        .then(onSignIn, function (error) {
-                            alert('Authentication failed.');
-                        });
+                //auth2.signIn()
+                //        .then(onSignIn, function (error) {
+                //            alert('Authentication failed.');
+                //        });
             };
 
         </script>
         <?php
         // put your code here
-        ?>
-    </body>
-</html>
+       
+ 

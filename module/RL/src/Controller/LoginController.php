@@ -4,7 +4,6 @@ namespace RL\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Google_AccessToken_Verify;
 use Google_Client;
 
 class LoginController extends AbstractActionController
@@ -33,7 +32,6 @@ class LoginController extends AbstractActionController
 
     public function tokensigninAction() {
         $parameters = $this->getRequest()->getPost();
-
         $client = new Google_Client();
 
         $aud = "960450020562-bij42s8ibvlc72igdaquu8ruengaenf9.apps.googleusercontent.com"; # My application name
