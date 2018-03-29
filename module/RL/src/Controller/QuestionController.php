@@ -22,16 +22,18 @@ class QuestionController extends AbstractActionController
     private $sessionContainer;
     private $scoreManager;
     private $sessionScoreManager;
+    private $authentication;
 
     public function __construct(QuestionTable $table, AnswerManager $answerManager, 
        Container $sessionContainer, ScoreManager $scoreManager,
-       SessionScoreManager $sessionScoreManager)
+       SessionScoreManager $sessionScoreManager, $authentication)
     {
         $this->table = $table;
         $this->answerManager = $answerManager;
         $this->sessionContainer = $sessionContainer;
         $this->scoreManager = $scoreManager;
         $this->sessionScoreManager = $sessionScoreManager;
+        $this->authentication = $authentication;
 
     }
 
@@ -42,7 +44,7 @@ class QuestionController extends AbstractActionController
     public function indexAction()
     {
         $request = $this->getRequest();
-
+        error_log('logged in: ' . $this->isLoggedIn());
         $answerManager = $this->answerManager;
         $this->fromSession();
 
@@ -78,12 +80,14 @@ class QuestionController extends AbstractActionController
 
         $form->get('question')->setValue($question->getQuestionText());        
        
+        $this->layout()->loggedIn = $this->isLoggedIn();
+        
         $view = new ViewModel([
             'activeQuestion' => $question->getArrayCopy(),
             'status' => $status,
             'lastActiveQuestion' => $lastActiveQuestionArray,
             'score' => $this->getSessionScoreManager()->getSessionScore(),
-            'form' => $form
+            'form' => $form,
         ]);
         
         $view = $this->addCharMap($view);
@@ -97,17 +101,21 @@ class QuestionController extends AbstractActionController
                 ->update();
     }
 
-    private function fromSession()
-    {
-       if ($this->sessionContainer->activeQuestion){
-          $this->getAnswerManager()->setActiveQuestion($this->sessionContainer->activeQuestion);
-       }
-
-        if ($this->sessionContainer->sessionScore){
-          $this->getSessionScoreManager()->setSessionScore($this->sessionContainer->sessionScore);
+    private function isLoggedIn() {
+        # error_log('isLoggedIn');
+        return $this->authentication->getIdentity() ? true : false;
+    }
+    
+    private function fromSession() {
+        if ($this->sessionContainer->activeQuestion) {
+            $this->getAnswerManager()->setActiveQuestion($this->sessionContainer->activeQuestion);
         }
 
-       return $this;
+        if ($this->sessionContainer->sessionScore) {
+            $this->getSessionScoreManager()->setSessionScore($this->sessionContainer->sessionScore);
+        }
+
+        return $this;
     }
 
     private function toSession()

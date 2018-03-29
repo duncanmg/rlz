@@ -10,6 +10,7 @@ use Zend\ModuleManager\Feature\ConfigProviderInterface;
 # use Zend\Session\Config\StandardConfig;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Zend\Authentication\AuthenticationService;
 
 class Module implements ConfigProviderInterface
 {
@@ -56,15 +57,23 @@ class Module implements ConfigProviderInterface
                 Model\AnswerManager::class => function ($container) {
                     return new Model\AnswerManager($container->get(Model\QuestionTable::class));
                 },
-                Model\ActiveQuestion::class => function ($container) {
+                Model\ActiveQuestion::class => function () {
                     return new Model\ActiveQuestion();
                 },
                 Model\ScoreManager::class => function ($container) {
                     return new Model\ScoreManager($container->get(Model\UserQuestionTable::class));
                 },
-                Model\SessionScoreManager::class => function ($container) {
+                Model\SessionScoreManager::class => function () {
                     return new Model\SessionScoreManager();
                 },
+                Model\AuthenticationAdapter::class => function () {
+                    return new Model\AuthenticationAdapter();
+                },
+                Zend\AuthenticationService::class => function($container) {
+                    $a = new AuthenticationService();
+                    $a->setAdapter($container->get(Model\AuthenticationAdapter::class));
+                    return $a;
+                }
             ],
         ];
     }
@@ -75,23 +84,23 @@ class Module implements ConfigProviderInterface
             'factories' => [
                 Controller\QuestionAdminController::class => function($container) {
                     return new Controller\QuestionAdminController(
-                        $container->get(Model\QuestionTable::class),
-                        $container->get(Model\SourceTable::class)    
+                            $container->get(Model\QuestionTable::class), $container->get(Model\SourceTable::class)
                     );
                 },
                 Controller\LoginController::class => function() {
                     return new Controller\LoginController(                            );
                 },
-                Controller\LoginRestController::class => function() {
-                    return new Controller\LoginRestController(                            );
-                },        
+                Controller\LoginRestController::class => function($container) {
+                    $a = $container->get(Zend\AuthenticationService::class);
+                    return new Controller\LoginRestController($a);
+                },
                 Controller\QuestionController::class => function($container) {
                     return new Controller\QuestionController(
-                        $container->get(Model\QuestionTable::class),
-                        $container->get(Model\AnswerManager::class),
-                        $container->get('RLContainerNamespace'),
-                        $container->get(Model\ScoreManager::class),
-                        $container->get(Model\SessionScoreManager::class)
+                            $container->get(Model\QuestionTable::class), $container->get(Model\AnswerManager::class), 
+                            $container->get('RLContainerNamespace'), 
+                            $container->get(Model\ScoreManager::class), 
+                            $container->get(Model\SessionScoreManager::class),
+                            $container->get(Zend\AuthenticationService::class)                             
                     );
                 },
             ],

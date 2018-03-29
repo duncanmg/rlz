@@ -4,50 +4,29 @@ namespace RL\Controller;
 
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
-use Google_Client;
+use Zend\Authentication\AuthenticationService;
 
-class LoginRestController extends AbstractRestfulController
-{
+class LoginRestController extends AbstractRestfulController {
 
-    public function __construct()
-    {
-        
+    private $authenticationService;
+    
+    public function __construct(AuthenticationService $authenticationService ) {
+        error_log('xx');
+        $this->authenticationService = $authenticationService;
     }
 
     public function create($parameters) {
-        # $parameters = $this->getRequest()->getPost();
-        $client = new Google_Client();
+        #$auth = new AuthenticationAdapter();
+        error_log('Hi');
+        $this->authenticationService->getAdapter()->setIdToken($parameters['idtoken']);
 
-        $aud = "960450020562-bij42s8ibvlc72igdaquu8ruengaenf9.apps.googleusercontent.com"; # My application name
-        $client->setApplicationName($aud);
-        $client->setDeveloperKey("R_8kDi-8OHbxSkaCFEUO4eqk"); # Simple API Key
+        $result = $this->authenticationService->authenticate();
 
-        $tokenData = $client->verifyIdToken($parameters['idtoken']);
-
-        $this->exceptionOnNoToken($tokenData);
-        $this->exceptionOnBadAud($tokenData, $aud);
-        $this->exceptionOnExpiredToken($tokenData);
-        error_log('login successful');
-        $view = new JsonModel(['data' => [], 'status' => 'SUCCESS']);
-        # error_log('xxx');
-        return $view;
-    }
-
-    private function exceptionOnNoToken($tokenData) {
-        if (!$tokenData) {
-            throw new \Exception('Invalid token. No token returned.');
-        }
-    }
-
-    private function exceptionOnBadAud($tokenData, $aud) {
-        if ($tokenData['aud'] != $aud) {
-            throw new \Exception('Invalid token. Invalid aud ' . $aud);
-        }
-    }
-
-    private function exceptionOnExpiredToken($tokenData) {
-        if ($tokenData['exp'] < time()) {
-            throw new \Exception('Invalid token. Expired token. ' . $tokenData['exp'] . ' < ' . time());
+        if ($result->isValid()) {
+            error_log(print_r(['lll', $this->authenticationService->getIdentity()],true));
+            return( new JsonModel(['data' => [], 'status' => 'SUCCESS', 'message' => 'Login successful']));
+        } else {
+            return(new JsonModel(['data' => [], 'status' => 'UNAUTHORIZED', 'message' => 'Login failed']));
         }
     }
 
