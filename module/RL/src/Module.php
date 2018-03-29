@@ -87,8 +87,8 @@ class Module implements ConfigProviderInterface
                             $container->get(Model\QuestionTable::class), $container->get(Model\SourceTable::class)
                     );
                 },
-                Controller\LoginController::class => function() {
-                    return new Controller\LoginController(                            );
+                Controller\LoginController::class => function($container) {
+                    return new Controller\LoginController($container->get(Zend\AuthenticationService::class));
                 },
                 Controller\LoginRestController::class => function($container) {
                     $a = $container->get(Zend\AuthenticationService::class);
